@@ -1,55 +1,16 @@
 from __future__ import print_function
 import random
-import simpy
-from enum import Enum
+import logging
+import os
 from com.sirui.sim.monitor import Monitor
 from com.sirui.sim.resources import *
-
-RANDOM_SEED = 42
-SCOPE_SIZE = 3
-NUM_ATOM = 3
-SIM_TIME = 50     # Simulation time in sim clock
+from com.sirui.sim import config
+from com.sirui.sim.position import Position
 
 # TODO add evaporation rate
-# TODO add two dimension
-# TODO Use Logging instead of print
+# TODO monitor unnecessary
 
-class Position(object):
-    # Coordinate in a 2D plane
-    LEFT = 0
-    RIGHT = 1
-    UP = 3
-    DOWN = 4
-    def __init__(self, x = None, y = None):
-        if x is None:
-            self.x = random.randint(0, SCOPE_SIZE-1)
-        else:
-            self.x = Position.edgeBound(x)
-        if y is None:
-            self.y = random.randint(0, SCOPE_SIZE-1)
-        else:
-            self.y = Position.edgeBound(y)
 
-    @classmethod
-    def getLeftPosition(cls, position):
-        return Position(position.x-1, position.y)
-    @classmethod
-    def getRightPosition(cls, position):
-        return Position(position.x+1, position.y)
-    @classmethod
-    def getUpPosition(cls, position):
-        return Position(position.x, position.y-1)
-    @classmethod
-    def getDownPosition(cls, position):
-        return Position(position.x, position.y+1)
-
-    @classmethod
-    def edgeBound(cls, i):
-        # utility method to confine position with field boundary
-        if i < 0:
-            i += SCOPE_SIZE
-        i %= SCOPE_SIZE
-        return i
 
 class Atom(object):
     def __init__(self, id, field, monitor, env, position=None):
@@ -100,7 +61,7 @@ class Atom(object):
             next_position = Position.getDownPosition(self.position)
         else:
             next_position = self.position
-            print("Exception: Invalid next position. ")
+            logger.error("Invalid next position. ")
         return next_position
 
     def getNeighbors(self):
@@ -111,13 +72,13 @@ class Atom(object):
         down_position = Position.getDownPosition(self.position)
         neighbors = []
         if self.field.getSite(left_position).atom != None:
-            neighbors.append(field.getSite(left_position).atom)
+            neighbors.append(self.field.getSite(left_position).atom)
         if self.field.getSite(right_position).atom != None:
-            neighbors.append(field.getSite(right_position).atom)
+            neighbors.append(self.field.getSite(right_position).atom)
         if self.field.getSite(up_position).atom != None:
-            neighbors.append(field.getSite(up_position).atom)
+            neighbors.append(self.field.getSite(up_position).atom)
         if self.field.getSite(down_position).atom != None:
-            neighbors.append(field.getSite(down_position).atom)
+            neighbors.append(self.field.getSite(down_position).atom)
         return neighbors
 
     @staticmethod
@@ -136,7 +97,7 @@ class Atom(object):
         elif num_neighbor == 4:
             hop_interval = 256
         else:
-            print('Exception: Invalid hop interval')
+            logger.error('Invalid hop interval. ')
         return hop_interval
 
     def updateNeighborTimeout(self):
@@ -144,7 +105,7 @@ class Atom(object):
         for neighbor in neighbors:
             num_neighbor = len(neighbor.getNeighbors())
             hop_interval = Atom.getHopInterval(num_neighbor)
-            print("Atom %s at Site (%d, %d) request interrupt with timeout %d" % (neighbor.id, neighbor.position.x, neighbor.position.y, hop_interval))
+            logger.debug("Atom %s at Site (%d,%d) request interrupt with timeout %d. " % (neighbor.id, neighbor.position.x, neighbor.position.y, hop_interval))
             neighbor.process.interrupt(hop_interval)
 
     def run(self):
@@ -152,53 +113,64 @@ class Atom(object):
         site = self.field.getSite(self.position)
         site.atom = self
         # self.neighbors = 0 # default
-        print("Atom %s at Site (%d, %d)" % (self.id, self.position.x, self.position.y))
+        logger.info("Clock %d Atom %s at Site (%d,%d). " % (self.env.now, self.id, self.position.x, self.position.y))
         self.log()
         # init all atoms
         yield self.env.timeout(1)
         while True:
             hop_interval = Atom.getHopInterval(len(self.getNeighbors()))
-            if len(self.getNeighbors()) == 4:# inland atom never hop
-                print("Atom %s at Site (%d, %d) not at edge. No move" % (self.id, self.position.x, self.position.y))
-                yield self.env.timeout(1)
-                continue
+            # if len(self.getNeighbors()) == 4:# inland atom never hop
+            #     logger.debug("Atom %s at Site (%d,%d) not at edge. No move. " % (self.id, self.position.x, self.position.y))
+            #     yield self.env.timeout(1)
+            #     continue
 
             while True:
                 try:
-                    print("Atom %s at Site (%d, %d) wait timeout %d" % (self.id, self.position.x, self.position.y, hop_interval))
+                    logger.debug("Atom %s at Site (%d,%d) wait timeout %d. " % (self.id, self.position.x, self.position.y, hop_interval))
                     yield self.env.timeout(hop_interval)
-                    print("Atom %s at Site (%d, %d) resume" % (self.id, self.position.x, self.position.y))
+                    logger.debug("Atom %s at Site (%d,%d) resume. " % (self.id, self.position.x, self.position.y))
                     break
                 except simpy.Interrupt as i:
-                    print("Atom %s at Site (%d, %d) timeout reset to %d" % (self.id, self.position.x, self.position.y, i.cause))
+                    logger.debug("Atom %s at Site (%d,%d) timeout reset to %d. " % (self.id, self.position.x, self.position.y, i.cause))
                     hop_interval = i.cause
-                except:
-                    print("Unexpected Exception: Atom %s at Site (%d, %d)" % (self.id, self.position.x, self.position.y))
+                except Exception, e:
+                    logger.error("Atom %s at Site (%d,%d) interrupted. " % (self.id, self.position.x, self.position.y), exc_info=True)
+                    raise(e)
 
             # get next hopping position
             next_position = self.getNextPosition()
 
             if self.field.getSite(next_position).resource.count != 0:
-                print("Collision! Atom %s tries to hop to Site %d but occupied. No move" % (self.id, next_position))
+                if self.position == next_position:
+                    logger.debug("Atom %s stays at Site (%d,%d). " % (self.id, next_position.x, next_position.y))
+                else:
+                    logger.warning("Collision! Atom %s tries to hop to Site (%d,%d) but occupied. No move. " % (self.id, next_position.x, next_position.y))
+
             else:
                 self.field.getSite(self.position).resource.release(self.request)
                 self.field.getSite(self.position).atom = None
                 # Update previous neighbors time out
                 self.updateNeighborTimeout()
-                print('Atom %s updates old neighbors.' % (self.id))
+                logger.debug('Atom %s updates old neighbors.' % (self.id))
 
                 self.request = self.field.getSite(next_position).resource.request()
-                print('Atom %s requests to Site (%d, %d).' % (self.id, next_position.x, next_position.y))
-                yield self.request
-                print('Atom %s granted Site (%d, %d).' % (self.id, next_position.x, next_position.y))
+                logger.debug('Atom %s requests to Site (%d,%d).' % (self.id, next_position.x, next_position.y))
+                try:
+                    yield self.request
+                except Exception, e:
+                    logger.error("Atom %s at Site (%d,%d) interrupted. " % (self.id, self.position.x, self.position.y), exc_info=True)
+                    raise(e)
 
+                logger.debug('Atom %s granted Site (%d,%d).' % (self.id, next_position.x, next_position.y))
+                logger.info('Clock %d Atom %s at Site (%d,%d).' % (self.env.now, self.id, next_position.x, next_position.y))
                 site = self.field.getSite(next_position)
                 site.atom = self
                 self.position = next_position
 
                 # Update new neighbors timeout.
                 self.updateNeighborTimeout()
-                print('Atom %s updates new neighbors.' % (self.id))
+                # print('Atom %s updates new neighbors.' % (self.id))
+                logger.debug('Atom %s updates new neighbors.' % (self.id))
                 self.log()
 
     def log(self):
@@ -208,17 +180,40 @@ class Atom(object):
 def clock(env, monitor):
     while True:
         yield env.timeout(1)
-        print("clock: %d" % env.now)
+        logger.debug("clock: %d" % env.now)
 
-if __name__ == '__main__':
+def main():
+    logger.info("Simulation starts. #Atom: %d, Field: %d*%d, Time: %d" % (config.NUM_ATOM, config.SCOPE_SIZE, config.SCOPE_SIZE, config.SIM_TIME))
+    if config.SCOPE_SIZE * config.SCOPE_SIZE < config.NUM_ATOM:
+        raise ValueError("Number of atom is too much")
     # Setup and start the simulation
-    random.seed(RANDOM_SEED)  # This helps reproducing the results
-
+    random.seed(config.RANDOM_SEED)  # This helps reproducing the results
     # Create an environment and start the setup process
     env = simpy.Environment()
-    monitor = Monitor(SIM_TIME, NUM_ATOM)
-    field = Field(env, SCOPE_SIZE)
-    atoms = [Atom(i, field, monitor, env) for i in range(NUM_ATOM)]
+    monitor = Monitor(config.SIM_TIME, config.NUM_ATOM)
+
+    field = Field(env, config.SCOPE_SIZE)
+    atoms = [Atom(i, field, monitor, env) for i in range(config.NUM_ATOM)]
     env.process(clock(env, monitor))
     # Execute!
-    env.run(until=SIM_TIME)
+    env.run(until=config.SIM_TIME)
+
+if __name__ == '__main__':
+    if os.path.exists('info.log'):
+        os.remove('info.log')
+    logger = logging.getLogger(__name__)
+    # logger.setLevel(logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
+
+    # create a file handler
+    handler = logging.FileHandler('info.log')
+    handler.setLevel(logging.INFO)
+
+    # create a logging format
+    # formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    # handler.setFormatter(formatter)
+
+    # add the handlers to the logger
+    logger.addHandler(handler)
+
+    main()
