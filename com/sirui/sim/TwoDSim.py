@@ -112,13 +112,34 @@ class Atom(object):
             logger.error('Invalid hop interval. ')
         return hop_interval
 
+    @staticmethod
+    def getEvaporationInterval(num_neighbor):
+        # Probability model that determines evaporation timeout
+        # TODO change to probability model
+        evaporation_interval = 100000
+        if num_neighbor == 0:
+            evaporation_interval = 1
+        elif num_neighbor == 1:
+            evaporation_interval = 10
+        elif num_neighbor == 2:
+            evaporation_interval = 100
+        elif num_neighbor == 3:
+            evaporation_interval = 1000
+        elif num_neighbor == 4:
+            evaporation_interval = 10000
+        else:
+            logger.error('Invalid evaporation interval. ')
+        return evaporation_interval
+
     def updateNeighborTimeout(self):
         neighbors = self.getNeighbors()
         for neighbor in neighbors:
             num_neighbor = len(neighbor.getNeighbors())
             hop_interval = Atom.getHopInterval(num_neighbor)
-            logger.debug("Atom %s at Site (%d,%d) request interrupt with timeout %d. " % (neighbor.id, neighbor.position.x, neighbor.position.y, hop_interval))
-            neighbor.process.interrupt(hop_interval)
+            evaporation_interval = Atom.getEvaporationInterval(num_neighbor)
+            logger.debug("Atom %s at Site (%d,%d) request migration interrupt with timeout %d. " % (neighbor.id, neighbor.position.x, neighbor.position.y, hop_interval))
+            logger.debug("Atom %s at Site (%d,%d) request evaporation interrupt with timeout %d. " % (neighbor.id, neighbor.position.x, neighbor.position.y, evaporation_interval))
+            neighbor.process.interrupt((hop_interval, evaporation_interval))
 
     def run(self):
         try:
@@ -126,24 +147,40 @@ class Atom(object):
         except Exception, e:
             logger.error("Atom %s at Site (%d,%d) interrupted. " % (self.id, self.position.x, self.position.y), exc_info=True)
             raise(e)
-
+        migration_timeout = None
+        evaporation_timeout = None
+        ret = None
         site = self.field.getSite(self.position)
         site.atom = self
         logger.info("Clock %d Atom %s at Site (%d,%d). " % (self.env.now, self.id, self.position.x, self.position.y))
         while True:
+
             hop_interval = Atom.getHopInterval(len(self.getNeighbors()))
+            evaporation_interval = Atom.getEvaporationInterval(len(self.getNeighbors()))
             while True:
                 try:
                     logger.debug("Atom %s at Site (%d,%d) wait timeout %d. " % (self.id, self.position.x, self.position.y, hop_interval))
-                    yield self.env.timeout(hop_interval)
+                    migration_timeout = self.env.timeout(hop_interval, 'migration')
+                    evaporation_timeout = self.env.timeout(evaporation_interval, 'evaporation')
+                    ret = yield migration_timeout | evaporation_timeout
                     logger.debug("Atom %s at Site (%d,%d) resume. " % (self.id, self.position.x, self.position.y))
                     break
                 except simpy.Interrupt as i:
-                    logger.debug("Atom %s at Site (%d,%d) timeout reset to %d. " % (self.id, self.position.x, self.position.y, i.cause))
-                    hop_interval = i.cause
+                    logger.debug("Atom %s at Site (%d,%d) migration timeout reset to %d. " % (self.id, self.position.x, self.position.y, i.cause[0]))
+                    logger.debug("Atom %s at Site (%d,%d) evaporation timeout reset to %d. " % (self.id, self.position.x, self.position.y, i.cause[1]))
+                    (hop_interval, evaporation_interval) = i.cause
                 except Exception, e:
-                    logger.error("Atom %s at Site (%d,%d) interrupted. " % (self.id, self.position.x, self.position.y), exc_info=True)
+                    logger.error("Atom %s at Site (%d,%d) unknown interruption. " % (self.id, self.position.x, self.position.y), exc_info=True)
                     raise(e)
+            if evaporation_timeout in ret:
+                # remove the atom
+                self.field.getSite(self.position).resource.release(self.request)
+                self.field.getSite(self.position).atom = None
+                self.updateNeighborTimeout()
+                logger.debug('Atom %s updates its neighbors timeout.' % (self.id))
+                logger.debug('Atom %s be removed. ' % (self.id))
+                logger.info("Clock %d Atom %s removed from Site (%d,%d). " % (self.env.now, self.id, self.position.x, self.position.y))
+                return
 
             # get next hopping position
             next_position = self.getNextPosition()
@@ -159,14 +196,14 @@ class Atom(object):
                 self.field.getSite(self.position).atom = None
                 # Update previous neighbors time out
                 self.updateNeighborTimeout()
-                logger.debug('Atom %s updates old neighbors.' % (self.id))
+                logger.debug('Atom %s updates old neighbors timeout.' % (self.id))
 
                 self.request = self.field.getSite(next_position).resource.request()
                 logger.debug('Atom %s requests to Site (%d,%d).' % (self.id, next_position.x, next_position.y))
                 try:
                     yield self.request
                 except Exception, e:
-                    logger.error("Atom %s at Site (%d,%d) interrupted. " % (self.id, self.position.x, self.position.y), exc_info=True)
+                    logger.error("Atom %s at Site (%d,%d) interrupted. Should not happen. " % (self.id, self.position.x, self.position.y), exc_info=True)
                     raise(e)
 
                 logger.debug('Atom %s granted Site (%d,%d).' % (self.id, next_position.x, next_position.y))
@@ -178,7 +215,7 @@ class Atom(object):
                 # Update new neighbors timeout.
                 self.updateNeighborTimeout()
                 # print('Atom %s updates new neighbors.' % (self.id))
-                logger.debug('Atom %s updates new neighbors.' % (self.id))
+                logger.debug('Atom %s updates new neighbors timeout.' % (self.id))
 
 def deposition(field, env):
     # TODO simulate deposition by adding more Atom

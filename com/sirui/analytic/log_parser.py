@@ -69,21 +69,40 @@ if __name__ == '__main__':
                 frames = np.full((sim_time, edge_size, edge_size), -1, np.int8)
                 atoms = {} # atomId : position
             elif line.startswith('Clock'):
-                words = line.split()
-                new_clock = int(words[1].strip())
-                atomId = int(words[3].strip())
-                (a, b) = words[6].split(',')
-                new_position = Position(int(a[1:]), int(b[:-2]))
-                while clock < new_clock:
-                    frames[clock+1] = copy.deepcopy(frames[clock])
-                    clock += 1
+                if 'at' in line:
+                    words = line.split()
+                    new_clock = int(words[1].strip())
+                    atomId = int(words[3].strip())
+                    (a, b) = words[6].split(',')
+                    new_position = Position(int(a[1:]), int(b[:-2]))
+                    while clock < new_clock:
+                        frames[clock+1] = copy.deepcopy(frames[clock])
+                        clock += 1
 
-                old_position = atoms.get(atomId, None)
-                if old_position is not None:
-                    frames[clock][old_position.x][old_position.y] = -1
-                frames[clock][new_position.x][new_position.y] = atomId
+                    old_position = atoms.get(atomId, None)
+                    if old_position is not None:
+                        frames[clock][old_position.x][old_position.y] = -1
+                    frames[clock][new_position.x][new_position.y] = atomId
+                    atoms[atomId] = new_position
 
-                atoms[atomId] = new_position
+                elif 'removed' in line:
+                    words = line.split()
+                    new_clock = int(words[1].strip())
+                    atomId = int(words[3].strip())
+                    (a, b) = words[7].split(',')
+                    position = Position(int(a[1:]), int(b[:-2]))
+                    while clock < new_clock:
+                        frames[clock+1] = copy.deepcopy(frames[clock])
+                        clock += 1
+
+                    frames[clock][position.x][position.y] = -1
+                    del atoms[atomId]
+
+                else:
+                    new_clock = -1
+                    raise ValueError("Wrong line")
+
+
 
             else:
                 pass
