@@ -8,7 +8,9 @@ import shutil
 import os
 import logging
 
-NUM_FRAME_SHOW = 50
+# TODO add growth rate v.s. driving potential plot
+
+NUM_FRAME_SHOW = 20
 
 logger = logging.getLogger(__name__)
 # logger.setLevel(logging.INFO)
@@ -53,6 +55,7 @@ if __name__ == '__main__':
     clock = 0
     atoms = []
     # TODO may need to buffer the lines if too large a file
+    # TODO change parser. each line represent a variable
     with open('../sim/info.log') as f:
         for line in f:
             if line.startswith('Simulation starts.'):
@@ -64,7 +67,7 @@ if __name__ == '__main__':
                 # init frames with -1, meaning no atom
                 # frames = [[[-1 for y in range(edge_size)] for x in range(edge_size)] for i in range(sim_time)]
                 frames = np.full((sim_time, edge_size, edge_size), -1, np.int8)
-                atoms = [None for i in range(num_atom)]
+                atoms = {} # atomId : position
             elif line.startswith('Clock'):
                 words = line.split()
                 new_clock = int(words[1].strip())
@@ -75,7 +78,7 @@ if __name__ == '__main__':
                     frames[clock+1] = copy.deepcopy(frames[clock])
                     clock += 1
 
-                old_position = atoms[atomId]
+                old_position = atoms.get(atomId, None)
                 if old_position is not None:
                     frames[clock][old_position.x][old_position.y] = -1
                 frames[clock][new_position.x][new_position.y] = atomId

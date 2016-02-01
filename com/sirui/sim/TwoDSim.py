@@ -2,33 +2,45 @@ from __future__ import print_function
 import random
 import logging
 import os
-from com.sirui.sim.monitor import Monitor
 from com.sirui.sim.resources import *
 from com.sirui.sim import config
 from com.sirui.sim.position import Position
 
 # TODO add evaporation rate
-# TODO monitor unnecessary
-
-
 
 class Atom(object):
-    def __init__(self, id, field, monitor, env, position=None):
+    id = 0 # keep track latest id
+    def __init__(self, id, field, env, position):
         self.id = id
         self.field = field
-        self.monitor = monitor
         self.env = env
-        if position is None:
-            # generate initial position using collision avoidance
-            while True:
-                position = Position()
-                if self.field.getSite(position).resource.count == 0:
-                    self.position = position
-                    break
-        else:
-            self.position = position
+        self.position = position
         self.request = self.field.getSite(self.position).resource.request()
         self.process = self.env.process(self.run())
+        site = self.field.getSite(self.position)
+        site.atom = None
+
+    @classmethod
+    def createAtom(cls, field, env):
+        # atom will not create if site occupied
+        position = Position()
+        if field.getSite(position).resource.count == 0:
+            cls(Atom.id, field, env, position)
+            Atom.id += 1
+
+    @classmethod
+    def createInitAtoms(cls, field, env, num_atom):
+        # create all init atom in a batch
+        while Atom.id < num_atom:
+            # TODO improve efficiency
+            # Must create atom
+            while True:
+                position = Position()
+                if field.getSite(position).resource.count == 0:
+                    cls(Atom.id, field, env, position)
+                    Atom.id += 1
+                    break
+
 
     def getUnoccupiedNeighborDirections(self):
         # return a list of possible move direction
@@ -109,21 +121,17 @@ class Atom(object):
             neighbor.process.interrupt(hop_interval)
 
     def run(self):
-        yield self.request
+        try:
+            yield self.request
+        except Exception, e:
+            logger.error("Atom %s at Site (%d,%d) interrupted. " % (self.id, self.position.x, self.position.y), exc_info=True)
+            raise(e)
+
         site = self.field.getSite(self.position)
         site.atom = self
-        # self.neighbors = 0 # default
         logger.info("Clock %d Atom %s at Site (%d,%d). " % (self.env.now, self.id, self.position.x, self.position.y))
-        self.log()
-        # init all atoms
-        yield self.env.timeout(1)
         while True:
             hop_interval = Atom.getHopInterval(len(self.getNeighbors()))
-            # if len(self.getNeighbors()) == 4:# inland atom never hop
-            #     logger.debug("Atom %s at Site (%d,%d) not at edge. No move. " % (self.id, self.position.x, self.position.y))
-            #     yield self.env.timeout(1)
-            #     continue
-
             while True:
                 try:
                     logger.debug("Atom %s at Site (%d,%d) wait timeout %d. " % (self.id, self.position.x, self.position.y, hop_interval))
@@ -171,30 +179,45 @@ class Atom(object):
                 self.updateNeighborTimeout()
                 # print('Atom %s updates new neighbors.' % (self.id))
                 logger.debug('Atom %s updates new neighbors.' % (self.id))
-                self.log()
 
-    def log(self):
-        # log current status into monitor
-        self.monitor.data[self.env.now][self.id] = self.position
+def deposition(field, env):
+    # TODO simulate deposition by adding more Atom
+    # create atom by DEPOSITION_RATE
+    if config.DEPOSITION_RATE >= 1:
+        while True:
+            yield env.timeout(1)
+            for i in range(round(config.DEPOSITION_RATE)):
+                Atom.createAtom(field, env)
 
-def clock(env, monitor):
+    else:
+        # create one atom after certain clock
+        period = round(1.0 / config.DEPOSITION_RATE)
+        while True:
+            yield env.timeout(period)
+            Atom.createAtom(field, env)
+
+def clock(env):
     while True:
         yield env.timeout(1)
         logger.debug("clock: %d" % env.now)
 
+
 def main():
-    logger.info("Simulation starts. #Atom: %d, Field: %d*%d, Time: %d" % (config.NUM_ATOM, config.SCOPE_SIZE, config.SCOPE_SIZE, config.SIM_TIME))
+    logger.info("Simulation starts. #InitAtom: %d, Field: %d*%d, Time: %d" % (config.NUM_ATOM, config.SCOPE_SIZE, config.SCOPE_SIZE, config.SIM_TIME))
     if config.SCOPE_SIZE * config.SCOPE_SIZE < config.NUM_ATOM:
         raise ValueError("Number of atom is too much")
     # Setup and start the simulation
     random.seed(config.RANDOM_SEED)  # This helps reproducing the results
     # Create an environment and start the setup process
     env = simpy.Environment()
-    monitor = Monitor(config.SIM_TIME, config.NUM_ATOM)
 
     field = Field(env, config.SCOPE_SIZE)
-    atoms = [Atom(i, field, monitor, env) for i in range(config.NUM_ATOM)]
-    env.process(clock(env, monitor))
+
+    Atom.createInitAtoms(field, env, config.NUM_ATOM)
+
+    env.process(clock(env))
+
+    env.process(deposition(field, env))
     # Execute!
     env.run(until=config.SIM_TIME)
 
