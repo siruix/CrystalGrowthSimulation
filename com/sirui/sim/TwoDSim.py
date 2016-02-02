@@ -2,8 +2,9 @@ from __future__ import print_function
 import random
 import logging
 import os
+import datetime
 from com.sirui.sim.resources import *
-from com.sirui.sim import config
+from com.sirui.sim.config import Config
 from com.sirui.sim.position import Position
 # TODO add evaporation rate
 
@@ -72,6 +73,7 @@ class Atom(object):
             next_position = Position.getDownPosition(self.position)
         else:
             next_position = self.position
+            logger = logging.getLogger(__name__)
             logger.error("Invalid next position. ")
         return next_position
 
@@ -97,16 +99,17 @@ class Atom(object):
         # Probability model that determines hop timeout
         # TODO change to probability model using arrhenius equation
         if num_neighbor == 0:
-            hop_interval = config.migration_period_0neighbor
+            hop_interval = Config.migration_period_0neighbor
         elif num_neighbor == 1:
-            hop_interval = config.migration_period_1neighbor
+            hop_interval = Config.migration_period_1neighbor
         elif num_neighbor == 2:
-            hop_interval = config.migration_period_2neighbor
+            hop_interval = Config.migration_period_2neighbor
         elif num_neighbor == 3:
-            hop_interval = config.migration_period_3neighbor
+            hop_interval = Config.migration_period_3neighbor
         elif num_neighbor == 4:
-            hop_interval = config.migration_period_4neighbor
+            hop_interval = Config.migration_period_4neighbor
         else:
+            logger = logging.getLogger(__name__)
             logger.error('Invalid hop interval. ')
             hop_interval = -1
             raise ValueError('Invalid hop interval. ')
@@ -116,16 +119,17 @@ class Atom(object):
     def getEvaporationInterval(num_neighbor):
         # Probability model that determines evaporation timeout
         if num_neighbor == 0:
-            evaporation_interval = config.evaporation_period_0neighbor
+            evaporation_interval = Config.evaporation_period_0neighbor
         elif num_neighbor == 1:
-            evaporation_interval = config.evaporation_period_1neighbor
+            evaporation_interval = Config.evaporation_period_1neighbor
         elif num_neighbor == 2:
-            evaporation_interval = config.evaporation_period_2neighbor
+            evaporation_interval = Config.evaporation_period_2neighbor
         elif num_neighbor == 3:
-            evaporation_interval = config.evaporation_period_3neighbor
+            evaporation_interval = Config.evaporation_period_3neighbor
         elif num_neighbor == 4:
-            evaporation_interval = config.evaporation_period_4neighbor
+            evaporation_interval = Config.evaporation_period_4neighbor
         else:
+            logger = logging.getLogger(__name__)
             logger.error('Invalid evaporation interval. ')
             evaporation_interval = -1
             raise ValueError('Invalid evaporation interval. ')
@@ -137,14 +141,17 @@ class Atom(object):
             num_neighbor = len(neighbor.getNeighbors())
             hop_interval = Atom.getHopInterval(num_neighbor)
             evaporation_interval = Atom.getEvaporationInterval(num_neighbor)
+            logger = logging.getLogger(__name__)
             logger.debug("Atom %s at Site (%d,%d) request migration interrupt with timeout %d. " % (neighbor.id, neighbor.position.x, neighbor.position.y, hop_interval))
             logger.debug("Atom %s at Site (%d,%d) request evaporation interrupt with timeout %d. " % (neighbor.id, neighbor.position.x, neighbor.position.y, evaporation_interval))
             neighbor.process.interrupt((hop_interval, evaporation_interval))
 
     def run(self):
+        logger = logging.getLogger(__name__)
         try:
             yield self.request
         except Exception, e:
+
             logger.error("Atom %s at Site (%d,%d) interrupted. " % (self.id, self.position.x, self.position.y), exc_info=True)
             raise(e)
         migration_timeout = None
@@ -220,53 +227,36 @@ class Atom(object):
 def deposition(field, env):
     # TODO simulate deposition by adding more Atom
     # create atom by DEPOSITION_RATE
-    if config.DEPOSITION_RATE >= 1:
+    if Config.DEPOSITION_RATE >= 1:
         while True:
             yield env.timeout(1)
-            for i in range(int(round(config.DEPOSITION_RATE))):
+            for i in range(int(round(Config.DEPOSITION_RATE))):
                 Atom.createAtom(field, env)
 
     else:
         # create one atom after certain clock
-        period = round(1.0 / config.DEPOSITION_RATE)
+        period = round(1.0 / Config.DEPOSITION_RATE)
         while True:
             yield env.timeout(period)
             Atom.createAtom(field, env)
 
 def clock(env):
+    logger = logging.getLogger(__name__)
     while True:
         yield env.timeout(1)
         logger.debug("clock: %d" % env.now)
 
 
-def main():
-    logger.info("Simulation starts. #InitAtom: %d, Field: %d*%d, Time: %d" % (config.NUM_ATOM, config.SCOPE_SIZE, config.SCOPE_SIZE, config.SIM_TIME))
-    if config.SCOPE_SIZE * config.SCOPE_SIZE < config.NUM_ATOM:
-        raise ValueError("Number of atom is too much")
-    # Setup and start the simulation
-    random.seed(config.RANDOM_SEED)  # This helps reproducing the results
-    # Create an environment and start the setup process
-    env = simpy.Environment()
-
-    field = Field(env, config.SCOPE_SIZE)
-
-    Atom.createInitAtoms(field, env, config.NUM_ATOM)
-
-    env.process(clock(env))
-
-    env.process(deposition(field, env))
-    # Execute!
-    env.run(until=config.SIM_TIME)
-
-if __name__ == '__main__':
-    if os.path.exists('info.log'):
-        os.remove('info.log')
+def main(beta_phi, beta_mu):
+    log_path = 'logs/sim_betaphi%s_betamu%s.log' % (beta_phi, beta_mu)
+    if os.path.exists(log_path):
+        os.remove(log_path)
     logger = logging.getLogger(__name__)
     # logger.setLevel(logging.INFO)
     logging.basicConfig(level=logging.DEBUG)
 
     # create a file handler
-    handler = logging.FileHandler('info.log')
+    handler = logging.FileHandler(log_path)
     handler.setLevel(logging.INFO)
 
     # create a logging format
@@ -276,4 +266,29 @@ if __name__ == '__main__':
     # add the handlers to the logger
     logger.addHandler(handler)
 
-    main()
+    Config.setParameters(beta_phi, beta_mu)
+    now = datetime.datetime.now()
+    logger.info(now.strftime("%Y-%m-%d %H:%M"))
+    logger.info('Beta_Phi: %s Beta_Mu: %s' % (beta_phi, beta_mu))
+    logger.info("Simulation starts. #InitAtom: %d, Field: %d*%d, Time: %d" % (Config.NUM_ATOM, Config.SCOPE_SIZE, Config.SCOPE_SIZE, Config.SIM_TIME))
+    if Config.SCOPE_SIZE * Config.SCOPE_SIZE < Config.NUM_ATOM:
+        raise ValueError("Number of atom is too much")
+    # Setup and start the simulation
+    random.seed(Config.RANDOM_SEED)  # This helps reproducing the results
+    # Create an environment and start the setup process
+    env = simpy.Environment()
+
+    field = Field(env, Config.SCOPE_SIZE)
+    Atom.id = 0
+    Atom.createInitAtoms(field, env, Config.NUM_ATOM)
+
+    env.process(clock(env))
+
+    env.process(deposition(field, env))
+    # Execute!
+    env.run(until=Config.SIM_TIME)
+
+if __name__ == '__main__':
+
+
+    main(2.0, 2.0)
