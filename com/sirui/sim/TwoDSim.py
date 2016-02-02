@@ -5,7 +5,6 @@ import os
 from com.sirui.sim.resources import *
 from com.sirui.sim import config
 from com.sirui.sim.position import Position
-
 # TODO add evaporation rate
 
 class Atom(object):
@@ -97,38 +96,39 @@ class Atom(object):
     def getHopInterval(num_neighbor):
         # Probability model that determines hop timeout
         # TODO change to probability model using arrhenius equation
-        hop_interval = 1000
         if num_neighbor == 0:
-            hop_interval = 1
+            hop_interval = config.migration_period_0neighbor
         elif num_neighbor == 1:
-            hop_interval = 4
+            hop_interval = config.migration_period_1neighbor
         elif num_neighbor == 2:
-            hop_interval = 16
+            hop_interval = config.migration_period_2neighbor
         elif num_neighbor == 3:
-            hop_interval = 64
+            hop_interval = config.migration_period_3neighbor
         elif num_neighbor == 4:
-            hop_interval = 256
+            hop_interval = config.migration_period_4neighbor
         else:
             logger.error('Invalid hop interval. ')
+            hop_interval = -1
+            raise ValueError('Invalid hop interval. ')
         return hop_interval
 
     @staticmethod
     def getEvaporationInterval(num_neighbor):
         # Probability model that determines evaporation timeout
-        # TODO change to probability model
-        evaporation_interval = 100000
         if num_neighbor == 0:
-            evaporation_interval = 1
+            evaporation_interval = config.evaporation_period_0neighbor
         elif num_neighbor == 1:
-            evaporation_interval = 10
+            evaporation_interval = config.evaporation_period_1neighbor
         elif num_neighbor == 2:
-            evaporation_interval = 100
+            evaporation_interval = config.evaporation_period_2neighbor
         elif num_neighbor == 3:
-            evaporation_interval = 1000
+            evaporation_interval = config.evaporation_period_3neighbor
         elif num_neighbor == 4:
-            evaporation_interval = 10000
+            evaporation_interval = config.evaporation_period_4neighbor
         else:
             logger.error('Invalid evaporation interval. ')
+            evaporation_interval = -1
+            raise ValueError('Invalid evaporation interval. ')
         return evaporation_interval
 
     def updateNeighborTimeout(self):
@@ -223,7 +223,7 @@ def deposition(field, env):
     if config.DEPOSITION_RATE >= 1:
         while True:
             yield env.timeout(1)
-            for i in range(round(config.DEPOSITION_RATE)):
+            for i in range(int(round(config.DEPOSITION_RATE))):
                 Atom.createAtom(field, env)
 
     else:
