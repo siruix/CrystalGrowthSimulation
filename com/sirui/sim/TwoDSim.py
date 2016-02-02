@@ -288,6 +288,8 @@ def main(beta_phi, beta_mu):
     # Execute!
     env.run(until=Config.SIM_TIME)
 
+    logger.handlers = []
+
 if __name__ == '__main__':
 
 
