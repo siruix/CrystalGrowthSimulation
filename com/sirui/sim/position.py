@@ -1,6 +1,6 @@
 import random
 from com.sirui.sim import config
-
+from com.sirui.sim.config import Config
 class Position(object):
     # Coordinate in a 2D plane
     LEFT = 0
@@ -9,11 +9,11 @@ class Position(object):
     DOWN = 4
     def __init__(self, x = None, y = None):
         if x is None:
-            self.x = random.randint(0, config.SCOPE_SIZE-1)
+            self.x = random.randint(0, Config.SCOPE_SIZE-1)
         else:
             self.x = Position.edgeBound(x)
         if y is None:
-            self.y = random.randint(0, config.SCOPE_SIZE-1)
+            self.y = random.randint(0, Config.SCOPE_SIZE-1)
         else:
             self.y = Position.edgeBound(y)
 
@@ -34,6 +34,6 @@ class Position(object):
     def edgeBound(cls, i):
         # utility method to confine position with field boundary
         if i < 0:
-            i += config.SCOPE_SIZE
-        i %= config.SCOPE_SIZE
+            i += Config.SCOPE_SIZE
+        i %= Config.SCOPE_SIZE
         return i
