@@ -18,16 +18,17 @@ from com.sirui.sim.config import Config
 class LogParser(object):
     NUM_FRAME_SHOW = 20
 
-    def __init__(self, beta_phi, beta_mu):
+    def __init__(self, beta_phi, beta_mu, repeat):
         self.beta_phi = beta_phi
         self.beta_mu = beta_mu
         self.fig_path = './images/sim_betaphi%s_betamu%s' % (self.beta_phi, self.beta_mu)
-        self.log_path = './logs/sim_betaphi%s_betamu%s.log' % (self.beta_phi, self.beta_mu)
+        self.log_path = './logs/sim_betaphi%s_betamu%s' % (self.beta_phi, self.beta_mu)
         self.frames = None
         self.atoms = {}
         self.coverage = None
         self.growth_rate = None
         self.num_atom = 0
+        self.repeat = repeat
         # logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
         # create a file handler
@@ -49,11 +50,18 @@ class LogParser(object):
             # fig.clf()
 
     def printRate(self):
+        #TODO Rate = R / k_plus
         self.growth_rate = np.diff(self.coverage)
         fig = plt.figure()
+        fig.hold(False)
         ax = fig.add_subplot(111)
+        ax.hold(False)
         ax.plot(self.coverage[:-1], self.growth_rate, 'ro')
-        plt.savefig(self.fig_path + '/rate')
+        plt.savefig(self.fig_path + '/rate_coverage')
+        ax.plot(range(len(self.coverage)), self.coverage, 'ro')
+        plt.savefig(self.fig_path + '/coverage_time')
+        np.savetxt(self.fig_path + "/coverage.csv", self.coverage, delimiter=",")
+        plt.close('all')
 
     def main(self):
         logger = logging.getLogger(__name__)
@@ -65,69 +73,76 @@ class LogParser(object):
         if not os.path.exists(self.fig_path):
             logger.info('Creating images folder... ' + self.fig_path)
             os.makedirs(self.fig_path)
-        clock = 0
+
         # TODO may need to buffer the lines if too large a file
         # TODO change parser. each line represent a variable
-        with open(self.log_path, 'r') as f:
-            timestamp = f.readline()
-            para = f.readline()
-            info = f.readline()
-            words = info.split()
-            # num_atom = int(words[3].strip()[:-1])
-            l = len(words[5].strip())//2
-            edge_size = int(words[5].strip()[:l-1])
-            sim_time = int(words[7].strip())
-            self.frames = np.full((sim_time, edge_size, edge_size), -1, np.int8)
-            self.atoms = {} # atomId : position
-            self.coverage = np.zeros(sim_time)
-            for line in islice(f, 2, None):
-                if 'at' in line:
-                    words = line.split()
-                    new_clock = int(words[1].strip())
-                    atomId = int(words[3].strip())
-                    (a, b) = words[6].split(',')
-                    new_position = Position(int(a[1:]), int(b[:-2]))
-                    while clock < new_clock:
-                        self.frames[clock+1] = copy.deepcopy(self.frames[clock])
-                        self.coverage[clock] = self.num_atom / edge_size / edge_size
-                        clock += 1
+        for i in range(self.repeat):
+            with open(self.log_path + '%d' % i, 'r') as f:
+                self.num_atom = 0
+                clock = 0
+                timestamp = f.readline()
+                para = f.readline()
+                info = f.readline()
+                words = info.split()
+                # num_atom = int(words[3].strip()[:-1])
+                l = len(words[5].strip())//2
+                edge_size = int(words[5].strip()[:l-1])
+                sim_time = int(words[7].strip())
+                self.frames = np.full((sim_time, edge_size, edge_size), -1, np.int8)
+                self.atoms = {} # atomId : position
+                coverage = np.zeros(sim_time)
+                for line in islice(f, 2, None):
+                    if 'at' in line:
+                        words = line.split()
+                        new_clock = int(words[1].strip())
+                        atomId = int(words[3].strip())
+                        (a, b) = words[6].split(',')
+                        new_position = Position(int(a[1:]), int(b[:-2]))
+                        while clock < new_clock:
+                            self.frames[clock+1] = copy.deepcopy(self.frames[clock])
+                            coverage[clock] = self.num_atom / edge_size / edge_size
+                            clock += 1
 
-                    old_position = self.atoms.get(atomId, None)
-                    if old_position is not None:
-                        self.frames[clock][old_position.x][old_position.y] = -1
+                        old_position = self.atoms.get(atomId, None)
+                        if old_position is not None:
+                            self.frames[clock][old_position.x][old_position.y] = -1
+                            self.num_atom -= 1
+                        self.frames[clock][new_position.x][new_position.y] = atomId
+                        self.atoms[atomId] = new_position
+                        self.num_atom += 1
+
+                    elif 'removed' in line:
+                        words = line.split()
+                        new_clock = int(words[1].strip())
+                        atomId = int(words[3].strip())
+                        (a, b) = words[7].split(',')
+                        position = Position(int(a[1:]), int(b[:-2]))
+                        while clock < new_clock:
+                            self.frames[clock+1] = copy.deepcopy(self.frames[clock])
+                            coverage[clock] = self.num_atom / edge_size / edge_size
+                            clock += 1
+
+
+                        self.frames[clock][position.x][position.y] = -1
+                        del self.atoms[atomId]
                         self.num_atom -= 1
-                    self.frames[clock][new_position.x][new_position.y] = atomId
-                    self.atoms[atomId] = new_position
-                    self.num_atom += 1
 
-                elif 'removed' in line:
-                    words = line.split()
-                    new_clock = int(words[1].strip())
-                    atomId = int(words[3].strip())
-                    (a, b) = words[7].split(',')
-                    position = Position(int(a[1:]), int(b[:-2]))
-                    while clock < new_clock:
-                        self.frames[clock+1] = copy.deepcopy(self.frames[clock])
-                        self.coverage[clock] = self.num_atom / edge_size / edge_size
-                        clock += 1
+                    else:
+                        raise ValueError("Wrong line")
 
-
-                    self.frames[clock][position.x][position.y] = -1
-                    del self.atoms[atomId]
-                    self.num_atom -= 1
-
-                else:
-                    raise ValueError("Wrong line")
-
-            self.coverage[clock] = self.num_atom / edge_size / edge_size
-            while clock+1 < sim_time:
-                self.frames[clock+1] = copy.deepcopy(self.frames[clock])
-                clock += 1
-                self.coverage[clock] = self.num_atom / edge_size / edge_size
-
+                coverage[clock] = self.num_atom / edge_size / edge_size
+                while clock+1 < sim_time:
+                    self.frames[clock+1] = copy.deepcopy(self.frames[clock])
+                    clock += 1
+                    coverage[clock] = self.num_atom / edge_size / edge_size
+            if self.coverage is None:
+                self.coverage = coverage
+            else:
+                self.coverage += coverage
+        self.coverage /= self.repeat
         # self.printFrames(range(0, clock, clock//LogParser.NUM_FRAME_SHOW))
         self.printRate()
 
 if __name__ == '__main__':
-    parser = LogParser(2.0, 2.0)
+    parser = LogParser(2.0, 2.0, 5)
     parser.main()

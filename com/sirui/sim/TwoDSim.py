@@ -6,7 +6,6 @@ import datetime
 from com.sirui.sim.resources import *
 from com.sirui.sim.config import Config
 from com.sirui.sim.position import Position
-# TODO add evaporation rate
 
 class Atom(object):
     id = 0 # keep track latest id
@@ -225,19 +224,15 @@ class Atom(object):
                 logger.debug('Atom %s updates new neighbors timeout.' % (self.id))
 
 def deposition(field, env):
-    # TODO simulate deposition by adding more Atom
     # create atom by DEPOSITION_RATE
-    if Config.DEPOSITION_RATE >= 1:
-        while True:
-            yield env.timeout(1)
-            for i in range(int(round(Config.DEPOSITION_RATE))):
-                Atom.createAtom(field, env)
-
-    else:
-        # create one atom after certain clock
-        period = round(1.0 / Config.DEPOSITION_RATE)
-        while True:
-            yield env.timeout(period)
+    # TODO Currently not probability model for efficiency reason.
+    while True:
+        yield env.timeout(1)
+        deposition_rate = Config.DEPOSITION_RATE
+        while deposition_rate >= 1:
+            Atom.createAtom(field, env)
+            deposition_rate -= 1
+        if random.random() < deposition_rate:
             Atom.createAtom(field, env)
 
 def clock(env):
@@ -247,13 +242,13 @@ def clock(env):
         logger.debug("clock: %d" % env.now)
 
 
-def main(beta_phi, beta_mu):
-    log_path = 'logs/sim_betaphi%s_betamu%s.log' % (beta_phi, beta_mu)
+def main(beta_phi, beta_mu, repeat):
+    log_path = 'logs/sim_betaphi%s_betamu%s%d' % (beta_phi, beta_mu, repeat)
     if os.path.exists(log_path):
         os.remove(log_path)
     logger = logging.getLogger(__name__)
-    # logger.setLevel(logging.INFO)
-    logging.basicConfig(level=logging.DEBUG)
+    logger.setLevel(logging.INFO)
+    logging.basicConfig(level=logging.INFO)
 
     # create a file handler
     handler = logging.FileHandler(log_path)
@@ -274,7 +269,7 @@ def main(beta_phi, beta_mu):
     if Config.SCOPE_SIZE * Config.SCOPE_SIZE < Config.NUM_ATOM:
         raise ValueError("Number of atom is too much")
     # Setup and start the simulation
-    random.seed(Config.RANDOM_SEED)  # This helps reproducing the results
+    # random.seed(Config.RANDOM_SEED)  # This helps reproducing the results
     # Create an environment and start the setup process
     env = simpy.Environment()
 
@@ -293,4 +288,4 @@ def main(beta_phi, beta_mu):
 if __name__ == '__main__':
 
 
-    main(2.0, 2.0)
+    main(2.0, 2.0, 1)
