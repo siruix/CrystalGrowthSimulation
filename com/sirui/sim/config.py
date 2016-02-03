@@ -1,14 +1,23 @@
 # config.py
 from math import exp
-
-
+# Model
+# k_plus = gamma * exp(beta * mu)               (1)
+# k_plus = k_eq * exp(beta * delta_mu)          (2) from (1)
+# k_minus = gamma * exp(-m * beta * phi)        (3)
+# k_eq = gamma * exp(-2 * beta * phi)           (4) according to equilibrium
+# put (4) into (2),
+# k_plus = gamma * exp(-2 * beta * phi) * exp(beta * delta_mu)
+# k_migration = gamma_migration * exp(-m * beta * phi)
 
 class Config(object):
     # global variables
     RANDOM_SEED = 42
     SCOPE_SIZE = 30
-    NUM_ATOM = 100
+    NUM_ATOM = 0
     SIM_TIME = 1000     # Simulation time in sim clock
+    GAMMA = 0.001        # frequency factor
+    # ratio is the migration rate to evaporation rate
+    ratio = 1e-100
     migration_period_0neighbor = 0
     migration_period_1neighbor = 0
     migration_period_2neighbor = 0
@@ -23,12 +32,10 @@ class Config(object):
 
     @classmethod
     def setParameters(cls, beta_phi, beta_delta_mu):
-        # k_plus = k_eq * exp(beta * delta_mu)
-        # k_minus = gamma * exp(-m * beta * phi)
-        # k_eq = gamma * exp(-2 * beta * phi)
+
 
         # set evaporation rate a reasonable value
-        gamma_eva = evaporation_rate_0neighbor = 0.01
+        gamma_eva = evaporation_rate_0neighbor = Config.GAMMA
         evaporation_rate_1neighbor = gamma_eva * exp(-beta_phi)
         evaporation_rate_2neighbor = gamma_eva * exp(-2*beta_phi)
         evaporation_rate_3neighbor = gamma_eva * exp(-3*beta_phi)
@@ -39,9 +46,8 @@ class Config(object):
         cls.evaporation_period_3neighbor = round(1.0 / evaporation_rate_3neighbor)
         cls.evaporation_period_4neighbor = round(1.0 / evaporation_rate_4neighbor)
 
-        # ratio is the migration rate to evaporation rate
-        ratio = 10.0
-        gamma_mig = migration_rate_0neighbor = ratio * gamma_eva
+
+        gamma_mig = migration_rate_0neighbor = Config.ratio * gamma_eva
         migration_rate_1neighbor = gamma_mig * exp(-beta_phi)
         migration_rate_2neighbor = gamma_mig * exp(-2*beta_phi)
         migration_rate_3neighbor = gamma_mig * exp(-3*beta_phi)
