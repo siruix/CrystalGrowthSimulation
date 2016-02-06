@@ -1,8 +1,14 @@
 import simpy
+
 class Site(object):
     def __init__(self, env, atom = None):
-        self.resource = simpy.Resource(env)
         self.atom = atom
+        self.resource = simpy.Resource(env)
+
+class Lattice(object):
+    def __init__(self, env, atom = None):
+        self.sites = [Site(env, atom), Site(env, atom)]
+
 
 class Field(object):
     # Simulation Scope
@@ -11,7 +17,10 @@ class Field(object):
     def __init__(self, env, scope_size):
         self.env = env
         # one piece of resource for each location
-        self.sites = [[Site(env) for i in range(scope_size)] for j in range(scope_size)]
+        self.lattices = [[Lattice(env) for i in range(scope_size)] for j in range(scope_size)]
+
+    def getLattice(self, position):
+        return self.lattices[position.x][position.y]
 
     def getSite(self, position):
-        return self.sites[position.x][position.y]
+        return self.getLattice(position).sites[position.k]
