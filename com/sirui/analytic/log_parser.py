@@ -23,47 +23,22 @@ class LogParser(object):
         self.beta_mu = beta_mu
         self.fig_path = './images/sim_betaphi%s_betamu%s' % (self.beta_phi, self.beta_mu)
         self.log_path = './logs/sim_betaphi%s_betamu%s' % (self.beta_phi, self.beta_mu)
-        self.frames = None
+        self.motions = {}
+        # Deposit   {clock : [(atom_id, 0, position)]}
+        # Evaporate {clock : [(atom_id, 1, position)]}
+        # Move      {clock : [(atom_id, 2, old_position, new_position)]}
         self.atoms = {}
         self.coverage = None
         self.growth_rate = None
         self.num_atom = 0
         self.repeat = repeat
+        self.deposition_rate_per_site = 0
         # logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
         # create a file handler
         handler = logging.FileHandler('log_parser.log')
         handler.setLevel(logging.INFO)
 
-    # TODO improve efficiency, modify the figure instead of re plot
-    def printFrames(self, frame_ids):
-        logger = logging.getLogger(__name__)
-        logger.info('Saving images... May take a while. ')
-        fig = plt.figure()
-        fig.hold(False)
-        ax = fig.add_subplot(111)
-        ax.hold(False)
-        for id in frame_ids:
-            (y, x) = np.nonzero(self.frames[id] != -1)
-            ax.scatter(x, y)
-            plt.savefig(self.fig_path + '/frame%d' % (id))
-            # fig.clf()
-
-    def printRate(self):
-        #TODO Rate = R / k_plus
-        self.growth_rate = np.diff(self.coverage)
-        fig = plt.figure()
-        fig.hold(False)
-        ax = fig.add_subplot(111)
-        ax.hold(False)
-        ax.plot(self.coverage[:-1], self.growth_rate, 'ro')
-        plt.savefig(self.fig_path + '/rate_coverage')
-        ax.plot(range(len(self.coverage)), self.coverage, 'ro')
-        plt.savefig(self.fig_path + '/coverage_time')
-        np.savetxt(self.fig_path + "/coverage.csv", self.coverage, delimiter=",")
-        plt.close('all')
-
-    def main(self):
         logger = logging.getLogger(__name__)
         now = datetime.datetime.now()
         logger.info(now.strftime("%Y-%m-%d %H:%M"))
@@ -82,67 +57,117 @@ class LogParser(object):
                 clock = 0
                 timestamp = f.readline()
                 para = f.readline()
+                deposition_rate_info = f.readline()
+                words = deposition_rate_info.split()
+                self.deposition_rate_per_site = float(words[4])
                 info = f.readline()
                 words = info.split()
                 # num_atom = int(words[3].strip()[:-1])
                 l = len(words[5].strip())//2
                 edge_size = int(words[5].strip()[:l-1])
                 sim_time = int(words[7].strip())
-                self.frames = np.full((sim_time, edge_size, edge_size), -1, np.int8)
-                self.atoms = {} # atomId : position
+                # self.frames = np.full((sim_time, edge_size, edge_size, 2), -1, np.int8)
+                # self.atoms = {} # atomId : position
                 coverage = np.zeros(sim_time)
-                for line in islice(f, 2, None):
-                    if 'at' in line:
+
+                for line in f.readlines():
+                    if 'deposits' in line:
                         words = line.split()
-                        new_clock = int(words[1].strip())
+                        clock = int(words[1].strip())
                         atomId = int(words[3].strip())
-                        (a, b) = words[6].split(',')
-                        new_position = Position(int(a[1:]), int(b[:-2]))
-                        while clock < new_clock:
-                            self.frames[clock+1] = copy.deepcopy(self.frames[clock])
-                            coverage[clock] = self.num_atom / edge_size / edge_size
-                            clock += 1
-
-                        old_position = self.atoms.get(atomId, None)
-                        if old_position is not None:
-                            self.frames[clock][old_position.x][old_position.y] = -1
-                            self.num_atom -= 1
-                        self.frames[clock][new_position.x][new_position.y] = atomId
-                        self.atoms[atomId] = new_position
-                        self.num_atom += 1
-
-                    elif 'removed' in line:
+                        (a, b, c) = words[6].split(',')
+                        position = Position(int(a[1:]), int(b), int(c[:-2]))
+                        # while clock < new_clock:
+                        #     self.frames[clock+1] = copy.deepcopy(self.frames[clock])
+                        #     coverage[clock] = self.num_atom / edge_size / edge_size / 2
+                        #     clock += 1
+                        self.motions.setdefault(clock,[]).append( (atomId, 0, position) )
+                        # old_position = self.atoms.get(atomId, None)
+                        # if old_position is not None:
+                        #     self.frames[clock][old_position.x][old_position.y][old_position.k] = -1
+                        #     self.num_atom -= 1
+                        # self.frames[clock][new_position.x][new_position.y][new_position.k] = atomId
+                        # self.atoms[atomId] = new_position
+                        # self.num_atom += 1
+                    elif 'evaporates' in line:
                         words = line.split()
-                        new_clock = int(words[1].strip())
+                        clock = int(words[1].strip())
                         atomId = int(words[3].strip())
-                        (a, b) = words[7].split(',')
-                        position = Position(int(a[1:]), int(b[:-2]))
-                        while clock < new_clock:
-                            self.frames[clock+1] = copy.deepcopy(self.frames[clock])
-                            coverage[clock] = self.num_atom / edge_size / edge_size
-                            clock += 1
+                        (a, b, c) = words[6].split(',')
+                        position = Position(int(a[1:]), int(b), int(c[:-2]))
+                        self.motions.setdefault(clock,[]).append( (atomId, 1, position) )
 
-
-                        self.frames[clock][position.x][position.y] = -1
-                        del self.atoms[atomId]
-                        self.num_atom -= 1
+                    elif 'moves' in line:
+                        words = line.split()
+                        clock = int(words[1].strip())
+                        atomId = int(words[3].strip())
+                        (a, b, c) = words[6].split(',')
+                        old_position = Position(int(a[1:]), int(b), int(c[:-2]))
+                        (a, b, c) = words[8].split(',')
+                        new_position = Position(int(a[1:]), int(b), int(c[:-2]))
+                        self.motions.setdefault(clock,[]).append( (atomId, 2, old_position, new_position) )
+                        # while clock < new_clock:
+                        #     self.frames[clock+1] = copy.deepcopy(self.frames[clock])
+                        #     coverage[clock] = self.num_atom / edge_size / edge_size / 2
+                        #     clock += 1
+                        #
+                        #
+                        # self.frames[clock][position.x][position.y][position.k] = -1
+                        # del self.atoms[atomId]
+                        # self.num_atom -= 1
 
                     else:
                         raise ValueError("Wrong line")
 
-                coverage[clock] = self.num_atom / edge_size / edge_size
-                while clock+1 < sim_time:
-                    self.frames[clock+1] = copy.deepcopy(self.frames[clock])
-                    clock += 1
-                    coverage[clock] = self.num_atom / edge_size / edge_size
-            if self.coverage is None:
-                self.coverage = coverage
-            else:
-                self.coverage += coverage
-        self.coverage /= self.repeat
-        # self.printFrames(range(0, clock, clock//LogParser.NUM_FRAME_SHOW))
-        self.printRate()
+    # TODO Draw graphene lattice figure
+    def printFrames(self, frame_ids):
+        logger = logging.getLogger(__name__)
+        logger.info('Saving images... May take a while. ')
+        fig = plt.figure()
+        fig.hold(False)
+        ax = fig.add_subplot(111)
+        ax.hold(False)
+        for id in frame_ids:
+            (y, x) = np.nonzero(self.frames[id] != -1)
+            ax.scatter(x, y)
+            plt.savefig(self.fig_path + '/frame%d' % (id))
+
+    def printRate(self):
+        #TODO Rate = R / k_plus
+        self.growth_rate = np.diff(self.coverage)
+        fig = plt.figure()
+        fig.hold(False)
+        ax = fig.add_subplot(111)
+        ax.hold(False)
+        ax.plot(self.coverage[:-1], self.growth_rate, 'ro')
+        plt.savefig(self.fig_path + '/rate_coverage')
+        ax.plot(range(len(self.coverage)), self.coverage, 'ro')
+        plt.savefig(self.fig_path + '/coverage_time')
+        np.savetxt(self.fig_path + "/coverage.csv", self.coverage, delimiter=",")
+        with open(self.fig_path + "/deposition_rate_per_site.txt", 'w') as f:
+            f.write('%s'% self.deposition_rate_per_site)
+        plt.close('all')
+
+    def getMotions(self):
+        return self.motions
+
+
+    def main(self):
+        pass
+
+        #         coverage[clock] = self.num_atom / edge_size / edge_size / 2
+        #         while clock+1 < sim_time:
+        #             self.frames[clock+1] = copy.deepcopy(self.frames[clock])
+        #             clock += 1
+        #             coverage[clock] = self.num_atom / edge_size / edge_size / 2
+        #     if self.coverage is None:
+        #         self.coverage = coverage
+        #     else:
+        #         self.coverage += coverage
+        # self.coverage /= self.repeat
+        # # self.printFrames(range(0, clock, clock//LogParser.NUM_FRAME_SHOW))
+        # self.printRate()
 
 if __name__ == '__main__':
-    parser = LogParser(2.0, 2.0, 5)
-    parser.main()
+    parser = LogParser(2.0, 2.0, 1)
+    # parser.main()
