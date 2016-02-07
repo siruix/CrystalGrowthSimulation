@@ -9,6 +9,7 @@ from com.sirui.sim.position import Position
 
 class Atom(object):
     id = 0 # keep track latest id
+    num_atoms = 0 # current total number of atoms
     def __init__(self, id, field, env, position):
         self.id = id
         self.field = field
@@ -18,12 +19,14 @@ class Atom(object):
         self.process = self.env.process(self.run())
         site = self.field.getSite(self.position)
         site.atom = None
+        Atom.num_atoms = 0
 
     @classmethod
     def createAtom(cls, field, env):
         # atom will not create if site occupied
         position = Position()
         if field.getSite(position).resource.count == 0:
+            Atom.num_atoms += 1
             cls(Atom.id, field, env, position)
             Atom.id += 1
 
@@ -37,6 +40,7 @@ class Atom(object):
             while True:
                 position = Position()
                 if field.getSite(position).resource.count == 0:
+                    Atom.num_atoms += 1
                     cls(Atom.id, field, env, position)
                     Atom.id += 1
                     break
@@ -90,57 +94,20 @@ class Atom(object):
 
         return neighbors
 
-    @staticmethod
-    def getHopInterval(num_neighbor):
-        # Probability model that determines hop timeout
-        # TODO change to probability model using arrhenius equation
-        if num_neighbor == 0:
-            hop_interval = Config.migration_period_0neighbor
-        elif num_neighbor == 1:
-            hop_interval = Config.migration_period_1neighbor
-        elif num_neighbor == 2:
-            hop_interval = Config.migration_period_2neighbor
-        elif num_neighbor == 3:
-            hop_interval = Config.migration_period_3neighbor
-        # elif num_neighbor == 4:
-        #     hop_interval = Config.migration_period_4neighbor
-        else:
-            logger = logging.getLogger(__name__)
-            logger.error('Invalid hop interval. ')
-            hop_interval = -1
-            raise ValueError('Invalid hop interval. ')
-        return hop_interval
 
-    @staticmethod
-    def getEvaporationInterval(num_neighbor):
-        # Probability model that determines evaporation timeout
-        if num_neighbor == 0:
-            evaporation_interval = Config.evaporation_period_0neighbor
-        elif num_neighbor == 1:
-            evaporation_interval = Config.evaporation_period_1neighbor
-        elif num_neighbor == 2:
-            evaporation_interval = Config.evaporation_period_2neighbor
-        elif num_neighbor == 3:
-            evaporation_interval = Config.evaporation_period_3neighbor
-        # elif num_neighbor == 4:
-        #     evaporation_interval = Config.evaporation_period_4neighbor
+    def isEvaporate(self):
+        evaporation_rate = Config.evaporation_rate_by_num_neighbor[len(self.getNeighbors())]
+        if random.random() < evaporation_rate:
+            return True
         else:
-            logger = logging.getLogger(__name__)
-            logger.error('Invalid evaporation interval. ')
-            evaporation_interval = -1
-            raise ValueError('Invalid evaporation interval. ')
-        return evaporation_interval
+            return False
 
-    def updateNeighborTimeout(self):
-        neighbors = self.getNeighbors()
-        for neighbor in neighbors:
-            num_neighbor = len(neighbor.getNeighbors())
-            hop_interval = Atom.getHopInterval(num_neighbor)
-            evaporation_interval = Atom.getEvaporationInterval(num_neighbor)
-            logger = logging.getLogger(__name__)
-            logger.debug("Atom %s at Site (%d,%d,%d) request migration interrupt with timeout %d. " % (neighbor.id, neighbor.position.x, neighbor.position.y, neighbor.position.k, hop_interval))
-            logger.debug("Atom %s at Site (%d,%d,%d) request evaporation interrupt with timeout %d. " % (neighbor.id, neighbor.position.x, neighbor.position.y, neighbor.position.k, evaporation_interval))
-            neighbor.process.interrupt((hop_interval, evaporation_interval))
+    def isMigrate(self):
+        migration_rate = Config.migration_rate_by_num_neighbor[len(self.getNeighbors())]
+        if random.random() < migration_rate:
+            return True
+        else:
+            return False
 
     def run(self):
         logger = logging.getLogger(__name__)
@@ -149,58 +116,36 @@ class Atom(object):
         except Exception, e:
             logger.error("Atom %s at Site (%d,%d,%d) interrupted. " % (self.id, self.position.x, self.position.y, self.position.k), exc_info=True)
             raise(e)
-        migration_timeout = None
-        evaporation_timeout = None
-        ret = None
+
         site = self.field.getSite(self.position)
         site.atom = self
         logger.info("Clock %d Atom %s deposits at (%d,%d,%d). " % (self.env.now, self.id, self.position.x, self.position.y, self.position.k))
-        self.updateNeighborTimeout()
-        while True:
 
-            hop_interval = Atom.getHopInterval(len(self.getNeighbors()))
-            evaporation_interval = Atom.getEvaporationInterval(len(self.getNeighbors()))
+        while True:
             while True:
                 try:
-                    logger.debug("Atom %s at Site (%d,%d,%d) migration timeout %d. " % (self.id, self.position.x, self.position.y, self.position.k, hop_interval))
-                    logger.debug("Atom %s at Site (%d,%d,%d) evaporation timeout %d. " % (self.id, self.position.x, self.position.y, self.position.k, evaporation_interval))
-                    migration_timeout = self.env.timeout(hop_interval, 'migration')
-                    evaporation_timeout = self.env.timeout(evaporation_interval, 'evaporation')
-                    ret = yield migration_timeout | evaporation_timeout
-                    logger.debug("Atom %s at Site (%d,%d,%d) resume. " % (self.id, self.position.x, self.position.y, self.position.k))
+                    yield self.env.timeout(1)
+                    logger.debug("Atom %s at Site (%d,%d,%d) check. " % (self.id, self.position.x, self.position.y, self.position.k))
                     break
                 except simpy.Interrupt as i:
                     logger.debug("Atom %s at Site (%d,%d,%d) migration timeout reset to %d. " % (self.id, self.position.x, self.position.y, self.position.k, i.cause[0]))
                     logger.debug("Atom %s at Site (%d,%d,%d) evaporation timeout reset to %d. " % (self.id, self.position.x, self.position.y, self.position.k, i.cause[1]))
-                    (hop_interval, evaporation_interval) = i.cause
                 except Exception, e:
                     logger.error("Atom %s at Site (%d,%d,%d) unknown interruption. " % (self.id, self.position.x, self.position.y, self.position.k), exc_info=True)
                     raise(e)
-            if evaporation_timeout in ret:
-                # remove the atom
+
+            if self.isEvaporate() is True:
                 self.field.getSite(self.position).resource.release(self.request)
                 self.field.getSite(self.position).atom = None
-                self.updateNeighborTimeout()
-                logger.debug('Atom %s updates its neighbors timeout.' % (self.id))
-                logger.debug('Atom %s be removed. ' % (self.id))
+                Atom.num_atoms -= 1
                 logger.info("Clock %d Atom %s evaporates from (%d,%d,%d). " % (self.env.now, self.id, self.position.x, self.position.y, self.position.k))
-                return
+                return      # stop such process when return
 
-            # get next hopping position
-            next_position = self.getNextPosition()
-
-            if self.field.getSite(next_position).resource.count != 0:
-                if self.position == next_position:
-                    logger.debug("Atom %s stays at Site (%d,%d,%d). " % (self.id, next_position.x, next_position.y, next_position.k))
-                else:
-                    logger.warning("Collision! Atom %s tries to hop to Site (%d,%d,%d) but occupied. No move. " % (self.id, next_position.x, next_position.y, next_position.k))
-
-            else:
+            elif self.isMigrate() is True:
+                # get next hopping position
+                next_position = self.getNextPosition()
                 self.field.getSite(self.position).resource.release(self.request)
                 self.field.getSite(self.position).atom = None
-                # Update previous neighbors time out
-                self.updateNeighborTimeout()
-                logger.debug('Atom %s updates old neighbors timeout.' % (self.id))
 
                 self.request = self.field.getSite(next_position).resource.request()
                 logger.debug('Atom %s requests to Site (%d,%d,%d).' % (self.id, next_position.x, next_position.y, next_position.k))
@@ -211,21 +156,19 @@ class Atom(object):
                     raise(e)
 
                 logger.debug('Atom %s granted Site (%d,%d,%d).' % (self.id, next_position.x, next_position.y, next_position.k))
-                logger.info('Clock %d Atom %s moves from (%d,%d,%d) to (%d,%d,%d).' % (self.env.now, self.id, next_position.x, next_position.y, self.position.k))
+                logger.info('Clock %d Atom %s moves from (%d,%d,%d) to (%d,%d,%d).' % (self.env.now, self.id, self.position.x, self.position.y, self.position.k, next_position.x, next_position.y, next_position.k))
                 site = self.field.getSite(next_position)
                 site.atom = self
                 self.position = next_position
 
-                # Update new neighbors timeout.
-                self.updateNeighborTimeout()
-                # print('Atom %s updates new neighbors.' % (self.id))
-                logger.debug('Atom %s updates new neighbors timeout.' % (self.id))
 
 def deposition(field, env):
     # create atom by DEPOSITION_RATE
     # TODO Currently not probability model for efficiency reason.
     while True:
         yield env.timeout(1)
+        if Atom.num_atoms >= Config.SCOPE_SIZE * Config.SCOPE_SIZE * 2:
+            raise ValueError('Coverage 100% ')
         deposition_rate = Config.DEPOSITION_RATE
         while deposition_rate >= 1:
             Atom.createAtom(field, env)
@@ -245,7 +188,7 @@ def main(beta_phi, beta_mu, repeat):
     if os.path.exists(log_path):
         os.remove(log_path)
     logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
     logging.basicConfig(level=logging.INFO)
 
     # create a file handler

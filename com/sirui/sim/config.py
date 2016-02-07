@@ -4,30 +4,23 @@ from math import exp
 # k_plus = gamma * exp(beta * mu)               (1)
 # k_plus = k_eq * exp(beta * delta_mu)          (2) from (1)
 # k_minus = gamma * exp(-m * beta * phi)        (3)
-# k_eq = gamma * exp(-2 * beta * phi)           (4) according to equilibrium
+# k_eq = gamma * exp(-1.5 * beta * phi)           (4) according to equilibrium
 # put (4) into (2),
-# k_plus = gamma * exp(-2 * beta * phi) * exp(beta * delta_mu)
+# k_plus = gamma * exp(-1.5 * beta * phi) * exp(beta * delta_mu)
 # k_migration = gamma_migration * exp(-m * beta * phi)
 
 class Config(object):
     # global variables
-    RANDOM_SEED = 42
-    SCOPE_SIZE = 10
-    NUM_ATOM = 30
-    SIM_TIME = 1000     # Simulation time in sim clock
-    GAMMA = 0.1        # frequency factor
+    # RANDOM_SEED = 42
+    SCOPE_SIZE = 30
+    NUM_ATOM = SCOPE_SIZE * SCOPE_SIZE * 2 * 0
+    SIM_TIME = 1000    # Simulation time in sim clock
+    GAMMA = 0.01        # frequency factor
     # ratio is the migration rate to evaporation rate
-    ratio = 1e-100
-    migration_period_0neighbor = 0
-    migration_period_1neighbor = 0
-    migration_period_2neighbor = 0
-    migration_period_3neighbor = 0
-    # migration_period_4neighbor = 0
-    evaporation_period_0neighbor = 0
-    evaporation_period_1neighbor = 0
-    evaporation_period_2neighbor = 0
-    evaporation_period_3neighbor = 0
-    # evaporation_period_4neighbor = 0
+    ratio = 1e2
+
+    migration_rate_by_num_neighbor = []
+    evaporation_rate_by_num_neighbor = []
     DEPOSITION_RATE = 0
     DEPOSITION_RATE_PER_SITE = 0
 
@@ -36,35 +29,24 @@ class Config(object):
 
 
         # set evaporation rate a reasonable value
-        gamma_eva = evaporation_rate_0neighbor = Config.GAMMA
-        evaporation_rate_1neighbor = gamma_eva * exp(-beta_phi)
-        evaporation_rate_2neighbor = gamma_eva * exp(-2*beta_phi)
-        evaporation_rate_3neighbor = gamma_eva * exp(-3*beta_phi)
-        # evaporation_rate_4neighbor = gamma_eva * exp(-4*beta_phi)
-        cls.evaporation_period_0neighbor = round(1.0 / evaporation_rate_0neighbor)
-        cls.evaporation_period_1neighbor = round(1.0 / evaporation_rate_1neighbor)
-        cls.evaporation_period_2neighbor = round(1.0 / evaporation_rate_2neighbor)
-        cls.evaporation_period_3neighbor = round(1.0 / evaporation_rate_3neighbor)
-        # cls.evaporation_period_4neighbor = round(1.0 / evaporation_rate_4neighbor)
+        gamma_eva = Config.GAMMA
+        Config.evaporation_rate_by_num_neighbor.append(gamma_eva)
+        Config.evaporation_rate_by_num_neighbor.append(gamma_eva * exp(-beta_phi))
+        Config.evaporation_rate_by_num_neighbor.append(gamma_eva * exp(-2*beta_phi))
+        Config.evaporation_rate_by_num_neighbor.append(gamma_eva * exp(-3*beta_phi))
 
-
-        gamma_mig = migration_rate_0neighbor = Config.ratio * gamma_eva
-        migration_rate_1neighbor = gamma_mig * exp(-beta_phi)
-        migration_rate_2neighbor = gamma_mig * exp(-2*beta_phi)
-        migration_rate_3neighbor = gamma_mig * exp(-3*beta_phi)
-        # migration_rate_4neighbor = gamma_mig * exp(-4*beta_phi)
-        cls.migration_period_0neighbor = round(1.0 / migration_rate_0neighbor)
-        cls.migration_period_1neighbor = round(1.0 / migration_rate_1neighbor)
-        cls.migration_period_2neighbor = round(1.0 / migration_rate_2neighbor)
-        cls.migration_period_3neighbor = round(1.0 / migration_rate_3neighbor)
-        # cls.migration_period_4neighbor = round(1.0 / migration_rate_4neighbor)
+        gamma_mig = Config.ratio * gamma_eva
+        Config.migration_rate_by_num_neighbor.append(gamma_mig)
+        Config.migration_rate_by_num_neighbor.append(gamma_mig * exp(-beta_phi))
+        Config.migration_rate_by_num_neighbor.append(gamma_mig * exp(-2*beta_phi))
+        Config.migration_rate_by_num_neighbor.append(gamma_mig * exp(-3*beta_phi))
 
 
 
         # per sim clock per site
         # k_plus = k_eq * exp(beta * delta_mu)
         # deposition rate
-        k_eq = gamma_eva * exp(-2*beta_phi)
+        k_eq = gamma_eva * exp(-1.5*beta_phi)
         cls.DEPOSITION_RATE_PER_SITE = k_plus = k_eq * exp(beta_delta_mu)
         # DEPOSITION_RATE_PER_SITE = 0.001
         # per sim clock of sim field.
