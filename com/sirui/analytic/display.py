@@ -1,18 +1,22 @@
 
 from __future__ import division
-import numpy as np
-from com.sirui.sim.position import Position
 from com.sirui.analytic.log_parser import LogParser
-
+from com.sirui.sim.config import Config
 # VPython 3D display script
 
 from visual import sphere
 from visual import rate
+from visual import display
+from math import sqrt
+# self.x + 0.5 * self.y, self.y * sqrt(3) / 2
+scene = display(center = (Config.SCOPE_SIZE/2 * 1.5, Config.SCOPE_SIZE/2 * sqrt(3)/2, 0))
 
 atoms = {}
-parser = LogParser(2.0, 2.0, 1)
+beta_phi = 7.0
+beta_delta_mu = 7.0
+parser = LogParser(beta_phi, beta_delta_mu, 0)
 motions = parser.getMotions()
-for i in range(100):
+for i in range(Config.SIM_TIME):
     motion_frame = motions.get(i)
     if motion_frame is not None:
         for move in motion_frame:
@@ -26,6 +30,6 @@ for i in range(100):
                 atoms[atom_id].visible = False
             else:
                 (atom_id, _, old_position, new_position) = move
-                atoms[atom_id].pos = new_position.toCordinate()
+                atoms[atom_id].pos = new_position.toCoordinate()
 
-    rate(1)
+    rate(5)
