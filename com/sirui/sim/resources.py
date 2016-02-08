@@ -24,3 +24,21 @@ class Field(object):
 
     def getSite(self, position):
         return self.getLattice(position).sites[position.k]
+
+    def isSiteOccupied(self, position):
+        if self.getSite(position).resource.count == 0:
+            return False
+        else:
+            return True
+
+    def setSiteAtom(self, position, atom):
+        self.getSite(position).atom = atom
+
+    def requestSite(self, position):
+        return self.getSite(position).resource.request()
+
+    def getSiteAtom(self, position):
+        return self.getSite(position).atom
+
+    def releaseSite(self, position, request):
+        self.getSite(position).resource.release(request)

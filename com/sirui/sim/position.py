@@ -44,6 +44,12 @@ class Position(object):
         else:
             return Position(position.x+1, position.y-1, 0)
 
+    def isNeighbor(self, other):
+        if self.getNeighbor1Position(self) == other or  self.getNeighbor2Position(self) == other or self.getNeighbor3Position(self) == other:
+            return True
+        else:
+            return False
+
     @classmethod
     def edgeBound(cls, i):
         # utility method to confine position with field boundary
@@ -59,3 +65,8 @@ class Position(object):
         c1 = (1/2, -1/2/sqrt(3)) # relate to c[0]
         return (c0[0] + self.k * c1[0], c0[1] + self.k * c1[1], 0)
 
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y and self.k == other.k
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
