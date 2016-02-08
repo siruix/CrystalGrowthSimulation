@@ -12,8 +12,8 @@ from math import sqrt
 scene = display(center = (Config.SCOPE_SIZE/2 * 1.5, Config.SCOPE_SIZE/2 * sqrt(3)/2, 0))
 
 atoms = {}
-beta_phi = 7.0
-beta_delta_mu = 7.0
+beta_phi = 5.0
+beta_delta_mu = 5.0
 parser = LogParser(beta_phi, beta_delta_mu, 0)
 motions = parser.getMotions()
 for i in range(Config.SIM_TIME):
@@ -32,4 +32,4 @@ for i in range(Config.SIM_TIME):
                 (atom_id, _, old_position, new_position) = move
                 atoms[atom_id].pos = new_position.toCoordinate()
 
-    rate(5)
+    rate(20)
