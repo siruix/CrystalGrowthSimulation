@@ -11,9 +11,9 @@ from math import exp
 
 class Config(object):
     # global variables
-    # RANDOM_SEED = 42
+    RANDOM_SEED = 42
     SCOPE_SIZE = 30
-    NUM_ATOM = SCOPE_SIZE * SCOPE_SIZE * 2 * 0
+    NUM_ATOM = SCOPE_SIZE * SCOPE_SIZE * 2 * 0.0
     SIM_TIME = 1000    # Simulation time in sim clock
     GAMMA = 0.01        # frequency factor
     # ratio is the migration rate to evaporation rate
