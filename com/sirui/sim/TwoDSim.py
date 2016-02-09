@@ -48,29 +48,41 @@ class Atom(object):
         # return a list of possible move direction
         # Now it's for one dimension
         possible_next_direction_list = []
-        if Atom.field.getSite(Position.getNeighbor1Position(self.position)).resource.count == 0:
-            possible_next_direction_list.append(Position.ONE)
-        if Atom.field.getSite(Position.getNeighbor2Position(self.position)).resource.count == 0:
-            possible_next_direction_list.append(Position.TWO)
-        if Atom.field.getSite(Position.getNeighbor3Position(self.position)).resource.count == 0:
-            possible_next_direction_list.append(Position.THREE)
+        positions = Position.getNeighborPositions(self.position)
+        for i,position in enumerate(positions):
+            if Atom.field.isSiteOccupied(position) is False:
+                possible_next_direction_list.append(i)
+        # if Atom.field.getSite(Position.getNeighbor2Position(self.position)).resource.count == 0:
+        #     possible_next_direction_list.append(Position.TWO)
+        # if Atom.field.getSite(Position.getNeighbor3Position(self.position)).resource.count == 0:
+        #     possible_next_direction_list.append(Position.THREE)
 
         return possible_next_direction_list
 
-    def getNextPositionAdAtom(self):
+    def getAtomMigratePosition(self):
+        positions = Position.getNeighborPositions(self.position)
+        unoccupied_positions = []
+        for position in positions:
+            if Atom.field.isSiteOccupied(position) is False:
+                unoccupied_positions.append(position)
+        rn = random.randint(0, len(unoccupied_positions)-1)
+        return unoccupied_positions[rn]
+
+    def getAdAtomNextPosition(self):
         # TODO next position affected by vicinity.
         # weighted average of all vicinity atoms on different rings
         # vicinity should be config
         # ring 0 is the direct neighbors
         # assume only be affected by ring 1
         positions = []
-        if Atom.field.isSiteOccupied(Position.getNeighbor1Position(self.position)) is False:
-            positions.append(Position.getNeighbor1Position(self.position))
-        if Atom.field.isSiteOccupied(Position.getNeighbor2Position(self.position)) is False:
-            positions.append(Position.getNeighbor2Position(self.position))
-            # num_neighbor.append(Atom.getNumNeighbors(position2))
-        if Atom.field.isSiteOccupied(Position.getNeighbor3Position(self.position)) is False:
-            positions.append(Position.getNeighbor3Position(self.position))
+        for position in Position.getNeighborPositions(self.position):
+            if Atom.field.isSiteOccupied(position) is False:
+                positions.append(position)
+        # if Atom.field.isSiteOccupied(Position.getNeighbor2Position(self.position)) is False:
+        #     positions.append(Position.getNeighbor2Position(self.position))
+        #     # num_neighbor.append(Atom.getNumNeighbors(position2))
+        # if Atom.field.isSiteOccupied(Position.getNeighbor3Position(self.position)) is False:
+        #     positions.append(Position.getNeighbor3Position(self.position))
             # num_neighbor.append(Atom.getNumNeighbors(position3))
         # find the largest num neighbor.
         positions.sort(key=lambda x: Atom.getNumNeighbors(x))
@@ -78,24 +90,15 @@ class Atom(object):
         index = num_neighbor.index(num_neighbor[-1])
         rn = random.randint(index, len(positions)-1)
         return positions[rn]
-        #
-        #
-        #
-        #
-        # if possible_next_direction_list[rn] == Position.ONE:
-        #     next_position = Position.getNeighbor1Position(self.position)
-        # elif possible_next_direction_list[rn] == Position.TWO:
-        #     next_position = Position.getNeighbor2Position(self.position)
-        # elif possible_next_direction_list[rn] == Position.THREE:
-        #     next_position = Position.getNeighbor3Position(self.position)
-        # else:
-        #     next_position = self.position
-        #     logger = logging.getLogger(__name__)
-        #     logger.error("Invalid next position. ")
-        # return next_position
 
-    def getNextPositionDimmer(self):
-        # Dimmer is considered as a whole. only consider first ring
+    def getDimerPair(self):
+        return self.getNeighbors()[0]
+
+    def getDimer(self):
+        pass
+
+    def getDimerNextPosition(self):
+        # Dimer is considered as a whole. only consider first ring
         # return which atom lead the migration also
         neighbor = self.getNeighbors()[0]
         position = []
@@ -118,34 +121,102 @@ class Atom(object):
         leader_atom = Atom.field.getSiteAtom(position[rn])
         return leader_atom,position[rn]
 
+    def getTrimer(self):
+        # return a list of positions of trimer cluster
+        pass
+
     @classmethod
     def getNumNeighbors(cls, position):
         num_neighbors = 0
-        position1 = Position.getNeighbor1Position(position)
-        position2 = Position.getNeighbor2Position(position)
-        position3 = Position.getNeighbor3Position(position)    
-        if Atom.field.isSiteOccupied(position1):
-            num_neighbors += 1
-        if Atom.field.isSiteOccupied(position2):
-            num_neighbors += 1
-        if Atom.field.isSiteOccupied(position3):
-            num_neighbors += 1
+        positions = Position.getNeighborPositions(position)
+        for position in positions:
+            if Atom.field.isSiteOccupied(position):
+                num_neighbors += 1
         return num_neighbors
 
-    def getNeighbors(self):
-        # Define neighbor region. Here assume graphene 2D plane, which has up to 3 neighbors
+    def getNumDeLocalised(self):
+        delocalized_atom_position = set({})
         position1 = Position.getNeighbor1Position(self.position)
-        position2 = Position.getNeighbor2Position(self.position)
-        position3 = Position.getNeighbor3Position(self.position)
-
-        neighbors = []
         if Atom.field.isSiteOccupied(position1):
-            neighbors.append(Atom.field.getSiteAtom(position1))
-        if Atom.field.isSiteOccupied(position2):
-            neighbors.append(Atom.field.getSiteAtom(position2))
-        if Atom.field.isSiteOccupied(position3):
-            neighbors.append(Atom.field.getSiteAtom(position3))
+            delocalized_atom_position.add(position1)
+            position12 = Position.getNeighbor2Position(position1)
+            position13 = Position.getNeighbor3Position(position1)
 
+            if Atom.field.isSiteOccupied(position12):
+                delocalized_atom_position.add(position12)
+                position123 = Position.getNeighbor3Position(position12)
+                if Atom.field.isSiteOccupied(position123):
+                    delocalized_atom_position.add(position123)
+                    position1231 = Position.getNeighbor3Position(position123)
+                    if Atom.field.isSiteOccupied(position1231):
+                        delocalized_atom_position.add(position1231)
+
+            if Atom.field.isSiteOccupied(position13):
+                delocalized_atom_position.add(position13)
+                position132 = Position.getNeighbor2Position(position13)
+                if Atom.field.isSiteOccupied(position132):
+                    delocalized_atom_position.add(position132)
+                    position1321 = Position.getNeighbor1Position(position132)
+                    if Atom.field.isSiteOccupied(position1321):
+                        delocalized_atom_position.add(position1321)
+
+        position2 = Position.getNeighbor2Position(self.position)
+        if Atom.field.isSiteOccupied(position2):
+            delocalized_atom_position.add(position2)
+            position21 = Position.getNeighbor1Position(position2)
+            position23 = Position.getNeighbor3Position(position2)
+
+            if Atom.field.isSiteOccupied(position21):
+                delocalized_atom_position.add(position21)
+                position213 = Position.getNeighbor3Position(position21)
+                if Atom.field.isSiteOccupied(position213):
+                    delocalized_atom_position.add(position213)
+                    position2132 = Position.getNeighbor2Position(position213)
+                    if Atom.field.isSiteOccupied(position2132):
+                        delocalized_atom_position.add(position2132)
+
+            if Atom.field.isSiteOccupied(position23):
+                delocalized_atom_position.add(position23)
+                position231 = Position.getNeighbor1Position(position23)
+                if Atom.field.isSiteOccupied(position231):
+                    delocalized_atom_position.add(position231)
+                    position2312 = Position.getNeighbor2Position(position231)
+                    if Atom.field.isSiteOccupied(position2312):
+                        delocalized_atom_position.add(position2312)
+
+        position3 = Position.getNeighbor3Position(self.position)
+        if Atom.field.isSiteOccupied(position3):
+            delocalized_atom_position.add(position3)
+            position31 = Position.getNeighbor1Position(position3)
+            position32 = Position.getNeighbor2Position(position3)
+
+            if Atom.field.isSiteOccupied(position31):
+                delocalized_atom_position.add(position31)
+                position312 = Position.getNeighbor2Position(position31)
+                if Atom.field.isSiteOccupied(position312):
+                    delocalized_atom_position.add(position312)
+                    position3123 = Position.getNeighbor3Position(position312)
+                    if Atom.field.isSiteOccupied(position3123):
+                        delocalized_atom_position.add(position3123)
+
+            if Atom.field.isSiteOccupied(position32):
+                delocalized_atom_position.add(position32)
+                position321 = Position.getNeighbor1Position(position32)
+                if Atom.field.isSiteOccupied(position321):
+                    delocalized_atom_position.add(position321)
+                    position3213 = Position.getNeighbor3Position(position321)
+                    if Atom.field.isSiteOccupied(position3213):
+                        delocalized_atom_position.add(position3213)
+
+        return len(delocalized_atom_position)
+
+    def getNeighbors(self):
+        # direct neighbor atom
+        positions = Position.getNeighborPositions(self.position)
+        neighbors = []
+        for position in positions:
+            if Atom.field.isSiteOccupied(position):
+                neighbors.append(Atom.field.getSiteAtom(position))
         return neighbors
 
     def isRing(self):
@@ -186,37 +257,79 @@ class Atom(object):
                             return True
         return False
 
+    def connectedAtoms(self):
+        # find all connected atoms and return a list
+        connected_atoms = [self]
+        queue = [self]
+        while len(queue) != 0:
+            atom = queue.pop(0)
+            for neighbor in atom.getNeighbors():
+                if neighbor not in connected_atoms:
+                    connected_atoms.append(neighbor)
+                    queue.append(neighbor)
+            if len(connected_atoms) > 10: # early termination if cluster size too large
+                return None
+        return connected_atoms
+
     def isAdAtom(self):
         return True if Atom.getNumNeighbors(self.position) == 0 else False
     
-    def isDimmer(self):
+    def isDimer(self):
         if Atom.getNumNeighbors(self.position) != 1:
             return False
-        position1 = Position.getNeighbor1Position(self.position)
-        if Atom.field.isSiteOccupied(position1) and Atom.getNumNeighbors(position1) == 1:
-            return True
+        positions = Position.getNeighborPositions(self.position)
+        for position in positions:
+            if Atom.field.isSiteOccupied(position) and Atom.getNumNeighbors(position) == 1:
+                return True
 
-        position2 = Position.getNeighbor2Position(self.position)
-        if Atom.field.isSiteOccupied(position2) and Atom.getNumNeighbors(position2) == 1:
-            return True
-
-        position3 = Position.getNeighbor3Position(self.position)
-        if Atom.field.isSiteOccupied(position3) and Atom.getNumNeighbors(position3) == 1:
-            return True
+    def isTrimer(self):
+        if self.connectedAtoms() is None:
+            return False
+        return True if len(self.connectedAtoms()) == 3 else False
 
     def isEvaporate(self):
-        # assume atom in a ring is not able to evaporate
-        if self.isRing() is True:
-            return False
+        # evaporation rate depends on direct neighbors and p-electron de-localization
+        # assume p-electron only present within three neighbor rings.
         evaporation_rate = Config.evaporation_rate_by_num_neighbor[Atom.getNumNeighbors(self.position)]
-        if random.random() < evaporation_rate:
+        num_delocalized = self.getNumDeLocalised() # 0 - 12
+        rate = evaporation_rate * Config.delocalized_rate[num_delocalized]
+        if random.random() < rate:
             return True
         else:
             return False
 
     def isMigrate(self):
-        # TODO migration affected vicinity neighbor
-        migration_rate = Config.migration_rate_by_num_neighbor[Atom.getNumNeighbors(self.position)]
+        num_neighbor = Atom.getNumNeighbors(self.position)
+        migrate_rate = Config.migration_rate_by_num_neighbor[num_neighbor]
+        num_delocalized = self.getNumDeLocalised() # 0 - 12
+        rate = migrate_rate * Config.delocalized_rate[num_delocalized]
+        if random.random() < rate:
+            return True
+        else:
+            return False
+
+    def isAdAtomMigrate(self):
+        # migration rate affected by vicinity neighbors
+        # TODO config vicinity range
+        migration_rate = Config.getAdAtomMigrationRate()
+        if random.random() < migration_rate:
+            return True
+        else:
+            return False
+
+    def isDimerDrift(self):
+        # migration rate affected by vicinity neighbors. Larger the cluster size, less rate
+        # TODO config vicinity range
+        migration_rate = Config.getDimerMigrationRate()
+        if random.random() < migration_rate:
+            return True
+        else:
+            return False
+
+    def isTrimerMigrate(self):
+        # migration rate affected by vicinity neighbors. Larger the cluster size, less rate
+        # TODO config vicinity range
+        migration_rate = Config.migration_rate_by_num_neighbor[Atom.getNumNeighbors(self.position)] / 3
         if random.random() < migration_rate:
             return True
         else:
@@ -242,90 +355,85 @@ class Atom(object):
                     logger.debug("Atom %s at Site (%d,%d,%d) check. " % (self.id, self.position.x, self.position.y, self.position.k))
                     break
                 except simpy.Interrupt as i:
-                    # migrate the interrupted dimmer
+                    # migrate the interrupted Dimer
                     next_position = i.cause
                     logger.debug("Atom %s migration to (%d,%d,%d). " % (self.id, next_position.x, next_position.y, next_position.k))
                     self.releaseSite()
                     self.request = Atom.field.requestSite(next_position)
-                    # logger.debug('Atom %s requests to Site (%d,%d,%d).' % (self.id, next_position.x, next_position.y, next_position.k))
-                    # logger.debug('Atom %s granted Site (%d,%d,%d).' % (self.id, next_position.x, next_position.y, next_position.k))
                     logger.info('Clock %d Atom %s moves from (%d,%d,%d) to (%d,%d,%d).' % (self.env.now, self.id, self.position.x, self.position.y, self.position.k, next_position.x, next_position.y, next_position.k))
                     self.requestSite(next_position)
-                    # try:
                     yield self.request
-                    # except Exception, e:
-                    #     logger.error("Atom %s at Site (%d,%d,%d) interrupted. Should not happen. " % (self.id, self.position.x, self.position.y, self.position.k), exc_info=True)
-                    #     raise(e)
 
                 except Exception, e:
                     logger.error("Atom %s at Site (%d,%d,%d) unknown interruption. " % (self.id, self.position.x, self.position.y, self.position.k), exc_info=True)
                     raise(e)
 
             if self.isEvaporate() is True:
+                # evaporation affected only by neighbors
                 self.releaseSite()
                 Atom.num_atoms -= 1
                 logger.info("Clock %d Atom %s evaporates from (%d,%d,%d). " % (self.env.now, self.id, self.position.x, self.position.y, self.position.k))
                 return      # stop such process when return
 
-            elif self.isMigrate() is True:
-                # assume only ad-atom or dimmer migration
+            # check if atom migrate
+            if self.isMigrate() is True:
+                next_position = self.getAtomMigratePosition()
+                self.releaseSite()
+                self.request = Atom.field.requestSite(next_position)
+                logger.debug('Atom %s requests to Site (%d,%d,%d). Ad-atom migration' % (self.id, next_position.x, next_position.y, next_position.k))
+                logger.info('Clock %d Atom %s moves from (%d,%d,%d) to (%d,%d,%d).' % (self.env.now, self.id, self.position.x, self.position.y, self.position.k, next_position.x, next_position.y, next_position.k))
+                self.requestSite(next_position)
+                yield self.request
 
-                if self.isAdAtom():
-                    # ad-atom migration
-                    next_position = self.getNextPositionAdAtom()
+            # if self.isAdAtom() and self.isAdAtomMigrate():
+            #     # ad-atom migration
+            #     next_position = self.getAdAtomNextPosition()
+            #     self.releaseSite()
+            #     self.request = Atom.field.requestSite(next_position)
+            #     logger.debug('Atom %s requests to Site (%d,%d,%d). Ad-atom migration' % (self.id, next_position.x, next_position.y, next_position.k))
+            #     self.requestSite(next_position)
+            #     logger.info('Clock %d Atom %s moves from (%d,%d,%d) to (%d,%d,%d).' % (self.env.now, self.id, self.position.x, self.position.y, self.position.k, next_position.x, next_position.y, next_position.k))
+            #     yield self.request
+
+            # cluster up to certain size enable migration
+            if self.isDimer() and self.isDimerDrift():
+                # Dimer migration
+                neighbor = self.getDimerPair()
+                leader, next_position = self.getDimerNextPosition()
+                if leader == self:
+                    neighbor_next_position = self.position
                     self.releaseSite()
-                    # Atom.field.getSite(self.position).resource.release(self.request)
-                    # Atom.field.getSite(self.position).atom = None
                     self.request = Atom.field.requestSite(next_position)
-                    logger.debug('Atom %s requests to Site (%d,%d,%d). Ad-atom migration' % (self.id, next_position.x, next_position.y, next_position.k))
-                    self.requestSite(next_position)
-                    # logger.debug('Atom %s granted Site (%d,%d,%d).' % (self.id, next_position.x, next_position.y, next_position.k))
+                    logger.debug('Atom %s requests to Site (%d,%d,%d). Dimer migration. Neighbor: %d' % (self.id, next_position.x, next_position.y, next_position.k, neighbor.id))
                     logger.info('Clock %d Atom %s moves from (%d,%d,%d) to (%d,%d,%d).' % (self.env.now, self.id, self.position.x, self.position.y, self.position.k, next_position.x, next_position.y, next_position.k))
+                    self.requestSite(next_position)
+                    neighbor.process.interrupt(neighbor_next_position)
                     yield self.request
 
-                elif self.isDimmer():
-                    # dimmer migration
-                    neighbors = self.getNeighbors()
-                    neighbor = neighbors[0]
-                    leader, next_position = self.getNextPositionDimmer()
-                    if leader == self:
-                        neighbor_next_position = self.position
-                        self.releaseSite()
-                        self.request = Atom.field.requestSite(next_position)
-                        logger.debug('Atom %s requests to Site (%d,%d,%d). Dimmer migration. Neighbor: %d' % (self.id, next_position.x, next_position.y, next_position.k, neighbor.id))
-                        # logger.debug('Atom %s granted Site (%d,%d,%d).' % (self.id, next_position.x, next_position.y, next_position.k))
-                        logger.info('Clock %d Atom %s moves from (%d,%d,%d) to (%d,%d,%d).' % (self.env.now, self.id, self.position.x, self.position.y, self.position.k, next_position.x, next_position.y, next_position.k))
-                        self.requestSite(next_position)
-                        # neighbor must be interrupt and migrate
-                        neighbor.process.interrupt(neighbor_next_position)
+                else:
+                    # use fake migration. tunneling self to next_position
+                    self.releaseSite()
+                    self.request = Atom.field.requestSite(next_position)
+                    logger.debug('Atom %s requests to Site (%d,%d,%d). Dimer tunnel migration. Neighbor: %d' % (self.id, next_position.x, next_position.y, next_position.k, neighbor.id))
+                    logger.info('Clock %d Atom %s moves from (%d,%d,%d) to (%d,%d,%d).' % (self.env.now, self.id, self.position.x, self.position.y, self.position.k, next_position.x, next_position.y, next_position.k))
+                    self.requestSite(next_position)
+                    yield self.request
 
-                        # try:
-                        yield self.request
-                        # except Exception, e:
-                        #     logger.error("Atom %s at Site (%d,%d,%d) interrupted. Should not happen. " % (self.id, self.position.x, self.position.y, self.position.k), exc_info=True)
-                        #     raise(e)
-                    else:
-                        # use fake migration. tunneling self to next_position
-                        self.releaseSite()
-                        self.request = Atom.field.requestSite(next_position)
-                        logger.debug('Atom %s requests to Site (%d,%d,%d). Dimmer tunnel migration. Neighbor: %d' % (self.id, next_position.x, next_position.y, next_position.k, neighbor.id))
-                        # logger.debug('Atom %s granted Site (%d,%d,%d).' % (self.id, next_position.x, next_position.y, next_position.k))
-                        logger.info('Clock %d Atom %s moves from (%d,%d,%d) to (%d,%d,%d).' % (self.env.now, self.id, self.position.x, self.position.y, self.position.k, next_position.x, next_position.y, next_position.k))
-                        self.requestSite(next_position)
-                        yield self.request
-
-                else: # other cluster size do not migrate
-                    logger.debug('Atom %s is a large cluster. no move' % (self.id))
+            # elif self.isTrimer() and self.isTrimerMigrate():
+            #     #
             else:
-                logger.debug('Atom %s neither evaporate nor migrate' % (self.id))
+                # general migration
+                logger.debug('Atom %s neither evaporate nor migrate nor drift' % (self.id))
 
 def deposition(env):
     # create atom by DEPOSITION_RATE
     # TODO Currently not probability model for efficiency reason.
+    logger = logging.getLogger(__name__)
     while True:
         yield env.timeout(1)
         if Atom.num_atoms >= Config.SCOPE_SIZE * Config.SCOPE_SIZE * 2:
-            raise ValueError('Coverage 100% ')
+            logger.debug('Coverage 100% ')
+            env.stopSimulation( )
         deposition_rate = Config.DEPOSITION_RATE
         while deposition_rate >= 1:
             Atom.createAtom(env)
@@ -351,12 +459,6 @@ def main(beta_phi, beta_mu, repeat, log_level):
     # create a file handler
     handler = logging.FileHandler(log_path)
     handler.setLevel(logging.INFO)
-
-    # create a logging format
-    # formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    # handler.setFormatter(formatter)
-
-    # add the handlers to the logger
     logger.addHandler(handler)
 
     Config.setParameters(beta_phi, beta_mu)
@@ -389,4 +491,4 @@ def main(beta_phi, beta_mu, repeat, log_level):
 if __name__ == '__main__':
 
 
-    main(5.0, 3.0, 0, logging.DEBUG)
+    main(0.2, 0.05, 0, logging.DEBUG)

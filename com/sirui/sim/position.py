@@ -7,7 +7,7 @@ class Position(object):
 
     ONE = 0
     TWO = 1
-    THREE = 3
+    THREE = 2
 
     def __init__(self, x = None, y = None, k = None):
         if x is None:
@@ -44,6 +44,13 @@ class Position(object):
         else:
             return Position(position.x+1, position.y-1, 0)
 
+    @classmethod
+    def getNeighborPositions(cls, position):
+        # return a list of all neighbor site positions in sequence
+        return [cls.getNeighbor1Position(position), cls.getNeighbor2Position(position), cls.getNeighbor3Position(position)]
+
+
+
     def isNeighbor(self, other):
         if self.getNeighbor1Position(self) == other or  self.getNeighbor2Position(self) == other or self.getNeighbor3Position(self) == other:
             return True
@@ -70,3 +77,6 @@ class Position(object):
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash((self.x, self.y, self.k))
