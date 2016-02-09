@@ -8,9 +8,9 @@ import com.sirui.sim.TwoDSim as TwoDSim
 import shutil
 import os
 import logging
-beta_phi = [0.2, 0.5]
+beta_phi = [2.0]
 # beta_phi = [5.0, 7.0, 10.0, 13.0, 15.0, 18.0, 20.0]
-beta_delta_mu = [0.1]
+beta_delta_mu = [0.001]
 
 print('Cleaning all previous logs and images...')
 if os.path.exists('images'):
