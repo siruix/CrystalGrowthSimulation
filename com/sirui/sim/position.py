@@ -57,6 +57,16 @@ class Position(object):
         else:
             return False
 
+    def getDirection(self, other):
+        if self.getNeighbor1Position(self) == other:
+            return Position.ONE
+        elif self.getNeighbor2Position(self) == other:
+            return Position.TWO
+        elif self.getNeighbor3Position(self) == other:
+            return Position.THREE
+        else:
+            return -1
+
     @classmethod
     def edgeBound(cls, i):
         # utility method to confine position with field boundary
