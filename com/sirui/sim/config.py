@@ -8,21 +8,25 @@ from math import pow
 # k_eq = gamma * exp(-1.5 * beta * phi)           (4) according to equilibrium
 # put (4) into (2),
 # k_plus = gamma * exp(-1.5 * beta * phi) * exp(beta * delta_mu)
-# k_migration = gamma_migration * exp(-m * beta * phi)
+# k_migration = gamma_migration * exp(-m * beta * phi * (phi_c/(phi_c+phi_cu))
 
 
 class Config(object):
     # global variables
     RANDOM_SEED = 42
-    SCOPE_SIZE = 30
+    SCOPE_SIZE = 50
     NUM_ATOM = SCOPE_SIZE * SCOPE_SIZE * 2 * 0.0
-    SIM_TIME = 2000   # Simulation time in sim clock
+    SIM_TIME = 1000   # Simulation time in sim clock
     GAMMA = 0.01        # frequency factor
     # ratio is the migration rate to evaporation rate
     ratio = 50
 
     # lower the stronger ring
     delocalized_base_rate = 0.7
+    # phi_c / (phi_c + phi_cu)
+    ratio_c = 0.8
+    # weight of delocalize effect
+    weight_delocalize = 1.7
     delocalized_rate = []
     migration_rate_by_num_neighbor = []
     evaporation_rate_by_num_neighbor = []
@@ -43,16 +47,16 @@ class Config(object):
 
         cls.gamma_mig = Config.ratio * gamma_eva
         Config.migration_rate_by_num_neighbor.append(cls.gamma_mig)
-        Config.migration_rate_by_num_neighbor.append(cls.gamma_mig * exp(-beta_phi))
-        Config.migration_rate_by_num_neighbor.append(cls.gamma_mig * exp(-2*beta_phi))
+        Config.migration_rate_by_num_neighbor.append(cls.gamma_mig * exp(-beta_phi*Config.ratio_c))
+        Config.migration_rate_by_num_neighbor.append(cls.gamma_mig * exp(-2*beta_phi*Config.ratio_c))
         Config.migration_rate_by_num_neighbor.append(0) # neighbor all occupied
 
-        Config.delocalized_rate = [pow(Config.delocalized_base_rate, i*1.7) for i in range(13)]
+        Config.delocalized_rate = [pow(Config.delocalized_base_rate, i*Config.weight_delocalize) for i in range(13)]
 
         # per sim clock per site
         # k_plus = k_eq * exp(beta * delta_mu)
         # deposition rate
-        k_eq = gamma_eva * exp(-1.5*beta_phi)
+        k_eq = gamma_eva * exp(-2*beta_phi)     # use 2 bonds as zigzag prevail at equilibrium
         cls.DEPOSITION_RATE_PER_SITE = k_plus = k_eq * exp(beta_delta_mu)
         # DEPOSITION_RATE_PER_SITE = 0.001
         # per sim clock of sim field.

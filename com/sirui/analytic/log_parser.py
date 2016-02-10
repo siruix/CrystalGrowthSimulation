@@ -23,6 +23,9 @@ class LogParser(object):
             self.log_path = './logs/sim_betaphi%s_betamu%s%d' % (self.beta_phi, self.beta_mu, repeat)
             self.frames_path = './frames/sim_betaphi%s_betamu%s%d' % (self.beta_phi, self.beta_mu, repeat)
 
+        if not os.path.isdir('./frames'):
+            os.makedirs('./frames')
+
         self.repeat = repeat
         self.motions = {}
         # Deposit   {clock : [(atom_id, 0, position)]}
@@ -33,11 +36,10 @@ class LogParser(object):
         self.growth_rate = None
         self.num_atom = 0
         self.deposition_rate_per_site = 0
-        # logger.setLevel(logging.INFO)
-        logging.basicConfig(level=logging.DEBUG)
+
         # create a file handler
-        handler = logging.FileHandler('log_parser.log')
-        handler.setLevel(logging.INFO)
+        fh = logging.FileHandler('log_parser.log')
+        fh.setLevel(logging.INFO)
 
         logger = logging.getLogger(__name__)
         now = datetime.datetime.now()
