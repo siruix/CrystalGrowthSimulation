@@ -6,22 +6,22 @@ import copy
 import numpy as np
 from com.sirui.sim.position import Position
 import os
-import logging
+# import logging
 import datetime
 from com.sirui.sim.config import Config
 
 
 class LogParser(object):
 
-    def __init__(self, beta_phi, beta_mu, repeat = None):
-        self.beta_phi = beta_phi
-        self.beta_mu = beta_mu
+    def __init__(self, delta_mu, repeat = None):
+        print('loading LogParser...')
+        self.delta_mu = delta_mu
         if repeat is None:
-            self.log_path = './logs/sim_betaphi%s_betamu%s' % (self.beta_phi, self.beta_mu)
-            self.frames_path = './frames/sim_betaphi%s_betamu%s' % (self.beta_phi, self.beta_mu)
+            self.log_path = './logs/sim_deltamu%s' % (self.delta_mu)
+            self.frames_path = './frames/sim_deltamu%s' % (self.delta_mu)
         else:
-            self.log_path = './logs/sim_betaphi%s_betamu%s%d' % (self.beta_phi, self.beta_mu, repeat)
-            self.frames_path = './frames/sim_betaphi%s_betamu%s%d' % (self.beta_phi, self.beta_mu, repeat)
+            self.log_path = './logs/sim_deltamu%s%d' % (self.delta_mu, repeat)
+            self.frames_path = './frames/sim_deltamu%s%d' % (self.delta_mu, repeat)
 
         if not os.path.isdir('./frames'):
             os.makedirs('./frames')
@@ -36,16 +36,17 @@ class LogParser(object):
         self.growth_rate = None
         self.num_atom = 0
         self.deposition_rate_per_site = 0
+        self.sim_time = None
 
         # create a file handler
-        fh = logging.FileHandler('log_parser.log')
-        fh.setLevel(logging.INFO)
-
-        logger = logging.getLogger(__name__)
+        # fh = logging.FileHandler('log_parser.log')
+        # fh.setLevel(logging.INFO)
+        #
+        # logger = logging.getLogger(__name__)
         now = datetime.datetime.now()
-        logger.info(now.strftime("%Y-%m-%d %H:%M"))
+        # logger.info(now.strftime("%Y-%m-%d %H:%M"))
         if os.path.exists(self.frames_path):
-            logger.info('Cleaning frames file...' + self.frames_path)
+            # logger.info('Cleaning frames file...' + self.frames_path)
             os.remove(self.frames_path)
 
         # parse the log file
@@ -61,7 +62,10 @@ class LogParser(object):
             # num_atom = int(words[3].strip()[:-1])
             l = len(words[5].strip())//2
             edge_size = int(words[5].strip()[:l-1])
-            sim_time = int(words[7].strip())
+            if words[7].strip() == 'None':
+                self.sim_time = None
+            else:
+                self.sim_time = int(words[7].strip())
 
             for line in f.readlines():
                 if 'deposits' in line:
@@ -95,8 +99,8 @@ class LogParser(object):
 
     # print frames data for external analytics
     def printFrames(self):
-        logger = logging.getLogger(__name__)
-        logger.info('Saving frames... May take a while. ')
+        # logger = logging.getLogger(__name__)
+        # logger.info('Saving frames... May take a while. ')
         # get full frames form motions
         frames = np.full((Config.SIM_TIME, Config.SCOPE_SIZE, Config.SCOPE_SIZE, 2), -1, np.int8)
 
@@ -137,5 +141,5 @@ class LogParser(object):
 
 
 if __name__ == '__main__':
-    parser = LogParser(2.0, 2.0, 1)
-    parser.printFrames()
+    parser = LogParser(2.0, 1)
+    # parser.printFrames()

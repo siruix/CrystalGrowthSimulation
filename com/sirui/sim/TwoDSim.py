@@ -65,6 +65,8 @@ class Atom(object):
         for position in positions:
             if Context.getField().isSiteOccupied(position) is False:
                 unoccupied_positions.append(position)
+        if len(unoccupied_positions) == 0:
+            return self.position
         rn = random.randint(0, len(unoccupied_positions)-1)
         return unoccupied_positions[rn]
 
@@ -295,11 +297,9 @@ class Atom(object):
             rate = Config.evaporation_rate_by_num_neighbor[0]
         if num_neighbor == 1: # dangling atom
             rate = Config.evaporation_rate_by_num_neighbor[1]
-        if num_neighbor == 2: # edge atom. Armchair or zigzag
-            if self.isStrongBond():
-                rate = Config.evaporation_rate_by_num_neighbor[2] / 2
-            else:
-                rate = Config.evaporation_rate_by_num_neighbor[2]
+        if num_neighbor == 2: # edge atom.
+            # delocalize effect mostly at edge
+            rate = Config.evaporation_rate_by_num_neighbor[2] * Config.delocalized_rate[self.getNumDeLocalised()]
 
         if num_neighbor == 3:
             evaporation_rate = Config.evaporation_rate_by_num_neighbor[3]
@@ -311,6 +311,8 @@ class Atom(object):
             return False
 
     def isMigrate(self):
+        # TODO more strong delocalizing effect
+        # TODO zigzag armchair
         num_neighbor = Atom.getNumNeighbors(self.position)
         migrate_rate = Config.migration_rate_by_num_neighbor[num_neighbor]
         num_delocalized = self.getNumDeLocalised() # 0 - 12
@@ -524,9 +526,9 @@ def clock(env):
     start = time.clock()
     while True:
         logger.debug("clock: %d" % env.now)
-        print("clock: %d / %d" % (env.now, Config.SIM_TIME-1))
+        print("clock: %d / %s" % (env.now, Config.SIM_TIME))
         end = time.clock()
-        if (end - start) > 10*60:
+        if (end - start) > 60*Config.time_limit:
             # early termination
             print('simulation terminated due to long running time!')
             stop_process = env.process(stopSimulation())
@@ -553,17 +555,17 @@ def configLogger(log_level, log_info_path):
     fh.setLevel(logging.INFO)
     logger.addHandler(fh)
 
-def printInfo(beta_phi, beta_mu):
+def printInfo(delta_mu):
     logger = logging.getLogger(__name__)
     now = datetime.datetime.now()
     logger.info(now.strftime("%Y-%m-%d %H:%M"))
-    logger.info('Beta_Phi: %s Beta_Mu: %s' % (beta_phi, beta_mu))
+    logger.info('Delta_Mu: %s' % (delta_mu))
     logger.info('Deposition rate per site: %s ' % Config.DEPOSITION_RATE_PER_SITE)
-    logger.info("Simulation starts. #InitAtom: %d, Field: %d*%d, Time: %d" % (Config.NUM_ATOM, Config.SCOPE_SIZE, Config.SCOPE_SIZE, Config.SIM_TIME))
+    logger.info("Simulation starts. #InitAtom: %d, Field: %d*%d, Time: %s" % (Config.NUM_ATOM, Config.SCOPE_SIZE, Config.SCOPE_SIZE, Config.SIM_TIME))
 
-    print('Beta_Phi: %s Beta_Mu: %s' % (beta_phi, beta_mu))
+    print('Delta_Mu: %s' % (delta_mu))
     print('Deposition rate per site: %s ' % Config.DEPOSITION_RATE_PER_SITE)
-    print("Simulation starts. #InitAtom: %d, Field: %d*%d, Time: %d" % (Config.NUM_ATOM, Config.SCOPE_SIZE, Config.SCOPE_SIZE, Config.SIM_TIME))
+    print("Simulation starts. #InitAtom: %d, Field: %d*%d, Time: %s" % (Config.NUM_ATOM, Config.SCOPE_SIZE, Config.SCOPE_SIZE, Config.SIM_TIME))
 
 def cleanUp():
     logger = logging.getLogger(__name__)
@@ -588,16 +590,16 @@ def stopSimulation():
 
         return
 
-def main(beta_phi, beta_mu, repeat, log_level):
-    log_info_path = 'logs/sim_betaphi%s_betamu%s%d' % (beta_phi, beta_mu, repeat)
+def main(delta_mu, repeat, log_level):
+    log_info_path = 'logs/sim_deltamu%s%d' % (delta_mu, repeat)
     if os.path.exists(log_info_path):
         os.remove(log_info_path)
 
     configLogger(log_level, log_info_path)
 
-    Config.setParameters(beta_phi, beta_mu)
+    Config.setParameters(delta_mu)
 
-    printInfo(beta_phi, beta_mu)
+    printInfo(delta_mu)
 
     if Config.SCOPE_SIZE * Config.SCOPE_SIZE * 2 < Config.NUM_ATOM:
         raise ValueError("Number of initial atom is too much")
@@ -610,13 +612,13 @@ def main(beta_phi, beta_mu, repeat, log_level):
     Atom.id = 0
     # Atom.field = field
     Atom.num_atoms = 0
-    Atom.createInitAtoms(env, Config.NUM_ATOM)
+
     clock_process = env.process(clock(env))
     deposition_process = env.process(deposition(env))
     context = Context.create(field=field, env=env)
     context.addProcess('clock', clock_process)
     context.addProcess('deposition', deposition_process)
-
+    Atom.createInitAtoms(env, Config.NUM_ATOM)
     # Execute!
     env.run(until=Config.SIM_TIME)
 
@@ -625,4 +627,4 @@ def main(beta_phi, beta_mu, repeat, log_level):
 if __name__ == '__main__':
 
 
-    main(1.5, 2.0, 0, logging.DEBUG)
+    main(1.5, 0, logging.DEBUG)

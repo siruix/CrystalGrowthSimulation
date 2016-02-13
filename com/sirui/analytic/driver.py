@@ -2,24 +2,23 @@
 Tuning parameters
 
 """
-
+# TODO add defect points, improve nucleation
+# TODO change model. beta_delta_mu match analytic model
 from com.sirui.analytic.log_parser import LogParser
+from com.sirui.sim.config import Config
 import com.sirui.sim.TwoDSim as TwoDSim
 import shutil
 import os
 import logging
-beta_phi =      [1.5, 1.5]
-beta_delta_mu = [0.3, 0.4]
 
+delta_mu = [0.0]
+Config.time_limit = 20
+Config.SIM_TIME = None
 print('Cleaning all previous logs and images...')
-if os.path.exists('images'):
-    shutil.rmtree('images')
 if os.path.exists('logs'):
     shutil.rmtree('logs')
-os.makedirs('images')
 os.makedirs('logs')
-for x,y in zip(beta_phi, beta_delta_mu):
+
+for x in delta_mu:
         for i in range(1):
-            TwoDSim.main(x, y, i, logging.WARNING)
-            # parser = LogParser(x, y, i)
-            # parser.printFrames()
+            TwoDSim.main(x, i, logging.WARNING)
