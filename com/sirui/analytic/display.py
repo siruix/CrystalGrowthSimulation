@@ -12,11 +12,10 @@ from math import sqrt
 scene = display(center = (Config.SCOPE_SIZE/2 * 1.5, Config.SCOPE_SIZE/2 * sqrt(3)/2, 0))
 
 atoms = {}
-beta_phi = 1.5
-beta_delta_mu = 0.4
-parser = LogParser(beta_phi, beta_delta_mu, 0)
+delta_mu = 0.0
+parser = LogParser(delta_mu, 0)
 motions = parser.getMotions()
-for i in range(Config.SIM_TIME):
+for i in range(len(motions)):
     motion_frame = motions.get(i)
     if motion_frame is not None:
         for move in motion_frame:
@@ -32,4 +31,4 @@ for i in range(Config.SIM_TIME):
                 (atom_id, _, old_position, new_position) = move
                 atoms[atom_id].pos = new_position.toCoordinate()
 
-    rate(70)
+    rate(150)
