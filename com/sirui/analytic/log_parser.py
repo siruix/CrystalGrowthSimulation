@@ -71,28 +71,31 @@ class LogParser(object):
                 if 'deposits' in line:
                     words = line.split()
                     clock = int(words[1].strip())
+                    atomType = words[2].strip()
                     atomId = int(words[3].strip())
                     (a, b, c) = words[6].split(',')
                     position = Position(int(a[1:]), int(b), int(c[:-2]))
-                    self.motions.setdefault(clock,[]).append( (atomId, 0, position) )
+                    self.motions.setdefault(clock,[]).append( (atomType, atomId, 0, position) )
 
                 elif 'evaporates' in line:
                     words = line.split()
                     clock = int(words[1].strip())
+                    atomType = words[2].strip()
                     atomId = int(words[3].strip())
                     (a, b, c) = words[6].split(',')
                     position = Position(int(a[1:]), int(b), int(c[:-2]))
-                    self.motions.setdefault(clock,[]).append( (atomId, 1, position) )
+                    self.motions.setdefault(clock,[]).append( (atomType, atomId, 1, position) )
 
                 elif 'moves' in line:
                     words = line.split()
                     clock = int(words[1].strip())
+                    atomType = words[2].strip()
                     atomId = int(words[3].strip())
                     (a, b, c) = words[6].split(',')
                     old_position = Position(int(a[1:]), int(b), int(c[:-1]))
                     (a, b, c) = words[8].split(',')
                     new_position = Position(int(a[1:]), int(b), int(c[:-2]))
-                    self.motions.setdefault(clock,[]).append( (atomId, 2, old_position, new_position) )
+                    self.motions.setdefault(clock,[]).append( (atomType, atomId, 2, old_position, new_position) )
 
                 else:
                     raise ValueError("Wrong line")

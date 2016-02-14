@@ -1,6 +1,6 @@
 from __future__ import division
 from math import exp
-from math import log
+
 # Model
 # k_plus = gamma * exp(beta * mu)               (1)
 # k_plus = k_eq * exp(beta * delta_mu)          (2) from (1)
@@ -17,14 +17,14 @@ class Config(object):
     # global variables
     RANDOM_SEED = 42
     SCOPE_SIZE = 50
-    NUM_ATOM = SCOPE_SIZE * SCOPE_SIZE * 2 * 0.1
+    NUM_ATOM = SCOPE_SIZE * SCOPE_SIZE * 2 * 0.0
     SIM_TIME = None   # Simulation time in sim clock
     GAMMA = 0.5        # migration frequency factor
     # ratio is the migration rate to evaporation rate.
     # Girit, 2009.  says 2-3 order
     migration_ratio = 1e3
     # simulation real time limit in minutes
-    time_limit = 60
+    time_limit = 20
     temperature = 1000
 
     # [Girit, 2009] one sigma 0.3eV - 0.6eV, two sigma 6eV, three sigma 9eV
@@ -45,6 +45,8 @@ class Config(object):
     DEPOSITION_RATE = 0
     DEPOSITION_RATE_PER_SITE = 0
 
+    NUM_DEFECT = 3
+    DEFECT_POSITIONS = []
 
     @classmethod
     def setParameters(cls, delta_mu):
@@ -63,6 +65,8 @@ class Config(object):
         cls.DEPOSITION_RATE_PER_SITE = k_plus = k_eq * eV2Rate(-delta_mu)
         cls.DEPOSITION_RATE = cls.DEPOSITION_RATE_PER_SITE * cls.SCOPE_SIZE * cls.SCOPE_SIZE
 
+
+
     @classmethod
     def getAdAtomMigrationRate(cls):
         return Config.migration_rate_by_num_neighbor[0]
@@ -77,3 +81,4 @@ class Config(object):
 
 def eV2Rate(eV):
     return exp(-eV*Electron_charge/Boltzmann/(Config.temperature+273))
+
