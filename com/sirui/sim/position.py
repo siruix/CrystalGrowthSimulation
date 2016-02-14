@@ -1,6 +1,5 @@
 from __future__ import division
 import random
-from com.sirui.sim import config
 from com.sirui.sim.config import Config
 from math import sqrt
 class Position(object):
@@ -13,15 +12,15 @@ class Position(object):
         if x is None:
             self.x = random.randint(0, Config.SCOPE_SIZE-1)
         else:
-            self.x = Position.edgeBound(x)
+            self.x = Position.edgeBound(int(x))
         if y is None:
             self.y = random.randint(0, Config.SCOPE_SIZE-1)
         else:
-            self.y = Position.edgeBound(y)
+            self.y = Position.edgeBound(int(y))
         if k is None:
             self.k = random.randint(0, 1)
         else:
-            self.k = k
+            self.k = int(k)
 
     @classmethod
     def getNeighbor1Position(cls, position):

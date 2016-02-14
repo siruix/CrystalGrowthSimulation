@@ -12,23 +12,23 @@ from math import sqrt
 scene = display(center = (Config.SCOPE_SIZE/2 * 1.5, Config.SCOPE_SIZE/2 * sqrt(3)/2, 0))
 
 atoms = {}
-delta_mu = 0.0
+delta_mu = 0.4
 parser = LogParser(delta_mu, 0)
 motions = parser.getMotions()
 for i in range(len(motions)):
     motion_frame = motions.get(i)
     if motion_frame is not None:
         for move in motion_frame:
-            mode = move[1]
+            mode = move[2]
             if mode == 0:
-                (atom_id, _, position) = move
-                atoms.setdefault(atom_id, sphere(pos = position.toCoordinate(), radius = 0.3))
+                (atomType, atom_id, _, position) = move
+                atoms.setdefault((atomType, atom_id), sphere(pos = position.toCoordinate(), radius = 0.3))
             elif mode == 1:
-                (atom_id, _, position) = move
+                (atomType, atom_id, _, position) = move
                 # remove sphere
-                atoms[atom_id].visible = False
+                atoms[(atomType, atom_id)].visible = False
             else:
-                (atom_id, _, old_position, new_position) = move
-                atoms[atom_id].pos = new_position.toCoordinate()
+                (atomType, atom_id, _, old_position, new_position) = move
+                atoms[(atomType, atom_id)].pos = new_position.toCoordinate()
 
     rate(150)
