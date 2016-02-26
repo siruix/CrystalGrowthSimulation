@@ -145,16 +145,16 @@ def configLogger(log_level, log_info_path):
     fh.setLevel(logging.INFO)
     logger.addHandler(fh)
 
-def main(delta_mu, repeat, log_level):
-    log_info_path = 'logs/sim_deltamu%s%d' % (delta_mu, repeat)
+def main(kn, repeat, log_level):
+    log_info_path = 'logs/sim_kn%s%d' % (kn, repeat)
     if os.path.exists(log_info_path):
         os.remove(log_info_path)
 
     configLogger(log_level, log_info_path)
 
-    Config.setParameters(delta_mu)
+    Config.setParameters(kn)
 
-    printInfo(delta_mu)
+    printInfo(kn)
 
     if Config.SCOPE_SIZE * Config.SCOPE_SIZE * 2 < Config.NUM_ATOM:
         raise ValueError("Number of initial atom is too much")

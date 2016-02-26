@@ -1,30 +1,20 @@
 from __future__ import division
-# import matplotlib
-# matplotlib.use('Agg')
-# import matplotlib.pyplot as plt
-import copy
-import numpy as np
+# import copy
 from com.sirui.sim.position import Position
-import os
-# import logging
-import datetime
-from com.sirui.sim.config import Config
-
+# import os
 
 class LogParser(object):
 
-    def __init__(self, delta_mu, repeat = None):
+    def __init__(self, n, repeat = None):
         print('loading LogParser...')
-        self.delta_mu = delta_mu
+        self.n = n
         if repeat is None:
-            self.log_path = './logs/sim_deltamu%s' % (self.delta_mu)
-            self.frames_path = './frames/sim_deltamu%s' % (self.delta_mu)
+            self.log_path = './logs/sim_kn%s' % (self.n)
         else:
-            self.log_path = './logs/sim_deltamu%s%d' % (self.delta_mu, repeat)
-            self.frames_path = './frames/sim_deltamu%s%d' % (self.delta_mu, repeat)
-
-        if not os.path.isdir('./frames'):
-            os.makedirs('./frames')
+            self.log_path = './logs/sim_kn%s%d' % (self.n, repeat)
+        #
+        # if not os.path.isdir('./frames'):
+        #     os.makedirs('./frames')
 
         self.repeat = repeat
         self.motions = {}
@@ -32,8 +22,8 @@ class LogParser(object):
         # Evaporate {clock : [(atom_id, 1, position)]}
         # Move      {clock : [(atom_id, 2, old_position, new_position)]}
         self.atoms = {}
-        self.coverage = None
-        self.growth_rate = None
+        # self.coverage = None
+        # self.growth_rate = None
         self.num_atom = 0
         self.deposition_rate_per_site = 0
         self.sim_time = None
@@ -43,11 +33,11 @@ class LogParser(object):
         # fh.setLevel(logging.INFO)
         #
         # logger = logging.getLogger(__name__)
-        now = datetime.datetime.now()
+        # now = datetime.datetime.now()
         # logger.info(now.strftime("%Y-%m-%d %H:%M"))
-        if os.path.exists(self.frames_path):
-            # logger.info('Cleaning frames file...' + self.frames_path)
-            os.remove(self.frames_path)
+        # if os.path.exists(self.frames_path):
+        #     # logger.info('Cleaning frames file...' + self.frames_path)
+        #     os.remove(self.frames_path)
 
         # parse the log file
         with open(self.log_path, 'r') as f:
@@ -101,43 +91,43 @@ class LogParser(object):
                     raise ValueError("Wrong line")
 
     # print frames data for external analytics
-    def printFrames(self):
-        # logger = logging.getLogger(__name__)
-        # logger.info('Saving frames... May take a while. ')
-        # get full frames form motions
-        frames = np.full((Config.SIM_TIME, Config.SCOPE_SIZE, Config.SCOPE_SIZE, 2), -1, np.int8)
-
-        for i in range(Config.SIM_TIME):
-            if i != 0:
-                frames[i] = copy.deepcopy(frames[i-1])
-            motion_frame = self.motions.get(i)
-            if motion_frame is not None:
-                for move in motion_frame:
-                    mode = move[1]
-                    if mode == 0: # deposition
-                        (atom_id, _, position) = move
-                        frames[i][position.x][position.y][position.k] = atom_id
-
-                    elif mode == 1: # evaporation
-                        (atom_id, _, position) = move
-                        frames[i][position.x][position.y][position.k] = -1
-
-                    else: # migration
-                        (atom_id, _, old_position, new_position) = move
-                        frames[i][old_position.x][old_position.y][old_position.k] = -1
-                        frames[i][new_position.x][new_position.y][new_position.k] = atom_id
-            else:
-                pass
-
-        with open(self.frames_path, 'w') as f:
-            f.write(str(Config.SIM_TIME)+' ' + str(Config.SCOPE_SIZE) + ' ' + str(Config.SCOPE_SIZE) + '\n')
-            f.write(str(self.deposition_rate_per_site)+'\n')
-            for i in range(Config.SIM_TIME):
-                for j in range(Config.SCOPE_SIZE):
-                    for k in range(Config.SCOPE_SIZE):
-                        f.write('%s ' % frames[i][j][k][0])
-                        f.write('%s ' % frames[i][j][k][1])
-                f.write('\n')
+    # def printFrames(self):
+    #     # logger = logging.getLogger(__name__)
+    #     # logger.info('Saving frames... May take a while. ')
+    #     # get full frames form motions
+    #     frames = np.full((Config.SIM_TIME, Config.SCOPE_SIZE, Config.SCOPE_SIZE, 2), -1, np.int8)
+    #
+    #     for i in range(Config.SIM_TIME):
+    #         if i != 0:
+    #             frames[i] = copy.deepcopy(frames[i-1])
+    #         motion_frame = self.motions.get(i)
+    #         if motion_frame is not None:
+    #             for move in motion_frame:
+    #                 mode = move[1]
+    #                 if mode == 0: # deposition
+    #                     (atom_id, _, position) = move
+    #                     frames[i][position.x][position.y][position.k] = atom_id
+    #
+    #                 elif mode == 1: # evaporation
+    #                     (atom_id, _, position) = move
+    #                     frames[i][position.x][position.y][position.k] = -1
+    #
+    #                 else: # migration
+    #                     (atom_id, _, old_position, new_position) = move
+    #                     frames[i][old_position.x][old_position.y][old_position.k] = -1
+    #                     frames[i][new_position.x][new_position.y][new_position.k] = atom_id
+    #         else:
+    #             pass
+    #
+    #     with open(self.frames_path, 'w') as f:
+    #         f.write(str(Config.SIM_TIME)+' ' + str(Config.SCOPE_SIZE) + ' ' + str(Config.SCOPE_SIZE) + '\n')
+    #         f.write(str(self.deposition_rate_per_site)+'\n')
+    #         for i in range(Config.SIM_TIME):
+    #             for j in range(Config.SCOPE_SIZE):
+    #                 for k in range(Config.SCOPE_SIZE):
+    #                     f.write('%s ' % frames[i][j][k][0])
+    #                     f.write('%s ' % frames[i][j][k][1])
+    #             f.write('\n')
 
     def getMotions(self):
         return self.motions

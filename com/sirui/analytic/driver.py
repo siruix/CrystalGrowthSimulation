@@ -11,14 +11,18 @@ import shutil
 import os
 import logging
 
-delta_mu = [0.2, 0.3]
-Config.time_limit = 20
+
+Config.time_limit = 10
 Config.SIM_TIME = None
+Config.Ea = 2.0
+Config.T = 1000
+concentration = [1e0, 1e1]
+
 print('Cleaning all previous logs and images...')
 if os.path.exists('logs'):
     shutil.rmtree('logs')
 os.makedirs('logs')
 
-for x in delta_mu:
+for kn in concentration:
         for i in range(1):
-            sim.main(x, i, logging.WARNING)
+            sim.main(kn, i, logging.WARNING)
