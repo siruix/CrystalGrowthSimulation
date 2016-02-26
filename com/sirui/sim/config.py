@@ -1,6 +1,6 @@
 from __future__ import division
 from math import exp
-
+from math import log
 # Model
 # k_plus = gamma * exp(beta * mu)               (1)
 # k_plus = k_eq * exp(beta * delta_mu)          (2) from (1)
@@ -10,8 +10,8 @@ from math import exp
 # k_plus = gamma * exp(-1.5 * beta * phi) * exp(beta * delta_mu)
 # k_migration = gamma_migration * exp(-m * beta * phi * (phi_c/(phi_c+phi_cu))
 
-Boltzmann = 1.38064852e-23
-Electron_charge = 1.60217662e-19
+k = 1.38064852e-23
+e = 1.60217662e-19
 
 class Config(object):
     # global variables
@@ -25,18 +25,13 @@ class Config(object):
     migration_ratio = 1e3
     # simulation real time limit in minutes
     time_limit = 20
-    temperature = 1000
 
-    # [Girit, 2009] one sigma 0.3eV - 0.6eV, two sigma 6eV, three sigma 9eV
-    # I include delocalize effect, so sigma bond energy is weaker.
-    # sigma bond
-    eVs = [0, 0.2, 0.7, 3]
-    # pi bond larger the stronger ring
-    delocalized_eV = 0.1
+
+
     # phi_c / (phi_c + phi_cu)
     ratio_c = 1.0
     # target coverage
-    C = 0.5
+    # C = 0.5
     # # weight of delocalize effect
     # weight_delocalize = 1.7
     delocalized_rate = []
@@ -47,22 +42,36 @@ class Config(object):
 
     NUM_DEFECT = 3
     DEFECT_POSITIONS = []
+    # temperature in C
+    T = 1000
+    # Active carbon species activation energy. The larger, the more temperature dependence
+    Ea = 2.0
+    # reference hydrocarbon amount (value not reflect physical)
+    n0 = None
+    # [Girit, 2009] one sigma 0.3eV - 0.6eV, two sigma 6eV, three sigma 9eV
+    # I include delocalize effect, so sigma bond energy is weaker.
+    # sigma bond
+    sigma_bonds = [0, 0.1, 0.6, 3]
+    # pi bond larger the stronger ring
+    delocalized_eV = 1e-2
+
 
     @classmethod
-    def setParameters(cls, delta_mu):
+    def setParameters(cls, kn):
 
         gamma_mig = Config.GAMMA
-        for eV in Config.eVs:
-            Config.migration_rate_by_num_neighbor.append(gamma_mig * eV2Rate(eV*Config.ratio_c))
+        for phi in Config.sigma_bonds:
+            Config.migration_rate_by_num_neighbor.append(gamma_mig * eV2Rate(phi * Config.ratio_c))
 
         gamma_eva = gamma_mig / Config.migration_ratio
-        for eV in Config.eVs:
-            Config.evaporation_rate_by_num_neighbor.append(gamma_eva*eV2Rate(eV))
+        for phi in Config.sigma_bonds:
+            Config.evaporation_rate_by_num_neighbor.append(gamma_eva * eV2Rate(phi))
 
         Config.delocalized_rate = [eV2Rate(i*Config.delocalized_eV) for i in range(13)]
-        # use 2 bonds as zigzag prevail at equilibrium
-        k_eq = gamma_eva * eV2Rate(Config.eVs[2]) / (1-Config.C)
-        cls.DEPOSITION_RATE_PER_SITE = k_plus = k_eq * eV2Rate(-delta_mu)
+
+        Config.n0 = log(0.1)*exp(e*Config.Ea/k/(Config.T+273))
+        # Does not use equilibrium condition
+        cls.DEPOSITION_RATE_PER_SITE = k_plus = gamma_eva*exp(kn*Config.n0*eV2Rate(Config.Ea))
         cls.DEPOSITION_RATE = cls.DEPOSITION_RATE_PER_SITE * cls.SCOPE_SIZE * cls.SCOPE_SIZE
 
 
@@ -80,5 +89,5 @@ class Config(object):
         return 5.0/27.0 * Config.migration_rate_by_num_neighbor[1]
 
 def eV2Rate(eV):
-    return exp(-eV*Electron_charge/Boltzmann/(Config.temperature+273))
+    return exp(-eV * e / k / (Config.T + 273))
 
