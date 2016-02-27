@@ -1,4 +1,3 @@
-
 from __future__ import division
 from com.sirui.analytic.log_parser import LogParser
 from com.sirui.sim.config import Config
@@ -7,7 +6,6 @@ from com.sirui.sim.config import Config
 from visual import sphere
 from visual import rate
 from visual import display
-from math import sqrt
 scene = display(center = (Config.SCOPE_SIZE/2, Config.SCOPE_SIZE/2, Config.SCOPE_HEIGHT/2))
 
 atoms = {}

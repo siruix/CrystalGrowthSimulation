@@ -1,7 +1,6 @@
 from __future__ import division
 import math
-# Model
-# Solid on Solid model. Each atom can only occupy one site. Every site identical.
+
 # Adsorption
 # k_plus = gamma * exp(beta * mu)               (1)
 # k_plus = k_eq * exp(beta * delta_mu)          (2) from (1)
@@ -13,9 +12,6 @@ import math
 # Diffusion
 # k_diff = gamma_diff * exp(-m*beta*phi)
 
-# k = 1.38064852e-23
-# e = 1.60217662e-19
-
 class Config(object):
     # global variables
     RANDOM_SEED = 42
@@ -24,7 +20,8 @@ class Config(object):
     NUM_ATOM = SCOPE_SIZE * SCOPE_SIZE * 2 * 0.0  # initial atom
     SIM_TIME = None   # Simulation time in sim clock. None means unlimited
     GAMMA = 0.5        # lattice vibration frequency factor. Use as migration rate.
-
+    delta_mu = None
+    phi = None
     # simulation real time limit in minutes. Set upper bound for simulation time.
     time_limit = 20
 

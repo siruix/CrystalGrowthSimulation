@@ -1,7 +1,5 @@
 from __future__ import division
-# import copy
 from com.sirui.sim.position import Position
-# import os
 
 class LogParser(object):
 
