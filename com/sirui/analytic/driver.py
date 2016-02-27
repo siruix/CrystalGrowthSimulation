@@ -2,25 +2,26 @@
 Tuning parameters
 
 """
-
-from com.sirui.analytic.log_parser import LogParser
-import com.sirui.sim.TwoDSim as TwoDSim
+from com.sirui.sim.config import Config
+import com.sirui.sim.simulate as sim
 import shutil
 import os
+import logging
 
-beta_phi = [0.1, 0.2, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0]
-beta_delta_mu = [0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0]
+
+Config.time_limit = 10
+Config.SIM_TIME = None
+# Config.T = 1000
+Config.SCOPE_HEIGHT = 30
+delta_mu = [1.0, 2.0]
+phi = [1.0, 1.5, 2.0, 2.5]
+
 
 print('Cleaning all previous logs and images...')
-if os.path.exists('images'):
-    shutil.rmtree('images')
 if os.path.exists('logs'):
     shutil.rmtree('logs')
-os.makedirs('images')
 os.makedirs('logs')
-for x in beta_phi:
-    for y in beta_delta_mu:
-        parser = LogParser(x, y, 10)
-        for i in range(10):
-            TwoDSim.main(x, y, i)
-        parser.main()
+
+for y in phi:
+    for x in delta_mu:
+        sim.main(x, y, logging.WARNING)
