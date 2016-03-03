@@ -1,7 +1,9 @@
+import random
+
+from com.sirui.sim.config import Config
 from com.sirui.sim.context import Context
 from com.sirui.sim.position import Position
-import random
-from com.sirui.sim.config import Config
+
 # from com.sirui.sim.utility import *
 import logging
 import simpy
@@ -408,7 +410,7 @@ class Carbon(Atom):
                 return      # stop such process when return
 
             # check if atom migrate
-            if self.isMigrate() is True:
+            if self.isMigrate():
                 next_position = self.getAtomMigratePosition()
                 self.releaseSite()
                 self.request = Context.getField().requestSite(next_position)
