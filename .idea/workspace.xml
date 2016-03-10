@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a8d85b1b-ebff-4486-b00d-a635b1ccb92e" name="Default" comment="added quantitative model">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/config.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/model_i2_defect.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/plot.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/plot_p.py" />
+    <list default="true" id="a8d85b1b-ebff-4486-b00d-a635b1ccb92e" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/0306/config.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/0306/fit_nucleation_density.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/0306/model.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/0306/plot.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/0306/plot_p.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/direct/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/direct/fit_nucleation_density.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/direct/model_i2_defect.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/direct/plot_p.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/precursor_mediated/__init__.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/precursor_mediated/config.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/precursor_mediated/plot2.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/precursor_mediated/plot3.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/model/config.py" afterPath="$PROJECT_DIR$/model/direct/config.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/model/model_i1.py" afterPath="$PROJECT_DIR$/model/direct/model_i1.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/model/model_i2.py" afterPath="$PROJECT_DIR$/model/direct/model_i2.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/model/model_i2_defect.py" afterPath="$PROJECT_DIR$/model/precursor_mediated/model.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/model/plot.py" afterPath="$PROJECT_DIR$/model/direct/plot.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/model/plot_p.py" afterPath="$PROJECT_DIR$/model/0306/plot_T.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/com/sirui/sim/atom.py" afterPath="$PROJECT_DIR$/com/sirui/sim/atom.py" />
     </list>
     <ignored path="2DSim.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -23,11 +38,17 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/2DSim$TwoDSim.coverage" NAME="TwoDSim Coverage Results" MODIFIED="1455421873157" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/com/sirui/sim" />
     <SUITE FILE_PATH="coverage/2DSim$display.coverage" NAME="display Coverage Results" MODIFIED="1455483821302" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/com/sirui/analytic" />
-    <SUITE FILE_PATH="coverage/2DSim$plot_p.coverage" NAME="plot_p Coverage Results" MODIFIED="1457036146632" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model" />
+    <SUITE FILE_PATH="coverage/2DSim$plot_p.coverage" NAME="plot_p_0306 Coverage Results" MODIFIED="1457404066865" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model/0306" />
+    <SUITE FILE_PATH="coverage/2DSim$fit_nucleation_density.coverage" NAME="fit_nucleation_density Coverage Results" MODIFIED="1457196242398" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model" />
+    <SUITE FILE_PATH="coverage/2DSim$plot.coverage" NAME="plot Coverage Results" MODIFIED="1457288510489" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model" />
+    <SUITE FILE_PATH="coverage/2DSim$plot2.coverage" NAME="plot2 Coverage Results" MODIFIED="1457228259282" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model/precursor_mediated" />
+    <SUITE FILE_PATH="coverage/2DSim$plot__2_.coverage" NAME="plot 0306 Coverage Results" MODIFIED="1457403829230" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model/0306" />
     <SUITE FILE_PATH="coverage/2DSim$basic.coverage" NAME="basic Coverage Results" MODIFIED="1456439183830" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model" />
-    <SUITE FILE_PATH="coverage/2DSim$plot.coverage" NAME="plot Coverage Results" MODIFIED="1457036132018" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model" />
+    <SUITE FILE_PATH="coverage/2DSim$plot_precursor.coverage" NAME="plot precursor Coverage Results" MODIFIED="1457290036393" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model/precursor_mediated" />
     <SUITE FILE_PATH="coverage/2DSim$model_i2_defect.coverage" NAME="model_i2_defect Coverage Results" MODIFIED="1456973539369" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model" />
+    <SUITE FILE_PATH="coverage/2DSim$plot_T.coverage" NAME="plot_T_0306 Coverage Results" MODIFIED="1457457308002" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model/0306" />
     <SUITE FILE_PATH="coverage/2DSim$driver.coverage" NAME="driver Coverage Results" MODIFIED="1455483162050" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/com/sirui/analytic" />
+    <SUITE FILE_PATH="coverage/2DSim$plot__1_.coverage" NAME="plot (1) Coverage Results" MODIFIED="1457225254363" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model/precursor_mediated" />
     <SUITE FILE_PATH="coverage/2DSim$model_i2.coverage" NAME="model_i2 Coverage Results" MODIFIED="1456440250195" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model" />
   </component>
   <component name="CreatePatchCommitExecutor">
@@ -39,11 +60,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="config.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/model/config.py">
+      <file leaf-file-name="config.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/0306/config.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.45643154">
-              <caret line="22" column="18" selection-start-line="22" selection-start-column="18" selection-end-line="22" selection-end-column="18" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="78" column="16" selection-start-line="78" selection-start-column="16" selection-end-line="78" selection-end-column="16" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -51,23 +72,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="model_i2_defect.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/model_i2_defect.py">
+      <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/model/0306/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="34" column="40" selection-start-line="34" selection-start-column="40" selection-end-line="34" selection-end-column="40" />
-              <folding>
-                <element signature="e#0#31#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="plot.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/plot.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="83" column="53" selection-start-line="83" selection-start-column="53" selection-end-line="83" selection-end-column="53" />
+            <state vertical-scroll-proportion="0.51256984">
+              <caret line="21" column="73" selection-start-line="21" selection-start-column="73" selection-end-line="21" selection-end-column="73" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -76,11 +85,35 @@
         </entry>
       </file>
       <file leaf-file-name="plot_p.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/plot_p.py">
+        <entry file="file://$PROJECT_DIR$/model/0306/plot_p.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="24" column="63" selection-start-line="24" selection-start-column="63" selection-end-line="24" selection-end-column="63" />
+              <caret line="31" column="27" selection-start-line="31" selection-start-column="27" selection-end-line="31" selection-end-column="27" />
+              <folding>
+                <element signature="e#0#31#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="plot_T.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/0306/plot_T.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="47" column="64" selection-start-line="47" selection-start-column="64" selection-end-line="47" selection-end-column="64" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="plot.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/0306/plot.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="120" column="0" selection-start-line="120" selection-start-column="0" selection-end-line="120" selection-end-column="14" />
+              <folding>
+                <element signature="e#0#31#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -130,10 +163,26 @@
         <option value="$PROJECT_DIR$/model/model_i2.py" />
         <option value="$PROJECT_DIR$/com/sirui/sim/simulate.py" />
         <option value="$PROJECT_DIR$/com/sirui/sim/atom.py" />
-        <option value="$PROJECT_DIR$/model/model_i2_defect.py" />
-        <option value="$PROJECT_DIR$/model/plot_p.py" />
         <option value="$PROJECT_DIR$/model/plot.py" />
+        <option value="$PROJECT_DIR$/model/plot_p.py" />
+        <option value="$PROJECT_DIR$/model/fit_nucleation_density.py" />
+        <option value="$PROJECT_DIR$/model/model_i2_defect.py" />
         <option value="$PROJECT_DIR$/model/config.py" />
+        <option value="$PROJECT_DIR$/model/config_precursor_mediated.py" />
+        <option value="$PROJECT_DIR$/model/precursor_mediated/config_precursor_mediated.py" />
+        <option value="$PROJECT_DIR$/model/direct/fit_nucleation_density.py" />
+        <option value="$PROJECT_DIR$/model/precursor_mediated/plot.py" />
+        <option value="$PROJECT_DIR$/model/precursor_mediated/plot2.py" />
+        <option value="$PROJECT_DIR$/model/direct/config.py" />
+        <option value="$PROJECT_DIR$/model/direct/model_i2_defect.py" />
+        <option value="$PROJECT_DIR$/model/direct/plot.py" />
+        <option value="$PROJECT_DIR$/model/precursor_mediated/config.py" />
+        <option value="$PROJECT_DIR$/model/precursor_mediated/model.py" />
+        <option value="$PROJECT_DIR$/model/0306/plot.py" />
+        <option value="$PROJECT_DIR$/model/0306/plot_p.py" />
+        <option value="$PROJECT_DIR$/model/0306/plot_T.py" />
+        <option value="$PROJECT_DIR$/model/0306/config.py" />
+        <option value="$PROJECT_DIR$/model/0306/model.py" />
       </list>
     </option>
   </component>
@@ -143,7 +192,6 @@
     <detection-done>true</detection-done>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="2" />
     <option name="y" value="23" />
     <option name="width" value="1400" />
     <option name="height" value="834" />
@@ -173,6 +221,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -215,69 +264,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="2DSim" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="2DSim" />
+              <option name="myItemId" value="model" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sirui" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="2DSim" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="2DSim" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sirui" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sim" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="2DSim" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="2DSim" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sirui" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="analytic" />
+              <option name="myItemId" value="0306" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -286,13 +277,11 @@
       <pane id="Scope">
         <subPane subId="Problems" />
       </pane>
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
-    <property name="FullScreen" value="false" />
     <property name="recentsLimit" value="5" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth0" value="131" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder0" value="0" />
@@ -310,24 +299,27 @@
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder2" value="2" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="931" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder3" value="3" />
-    <property name="restartRequiresConfirmation" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ThreeDSim/CrystalGrowthSimulation" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/model/precursor_mediated" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="js-jscs-nodeInterpreter" value="/usr/local/bin/node" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/model" />
-      <recent name="$PROJECT_DIR$/com/sirui/sim/logs" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/model/direct" />
+      <recent name="$PROJECT_DIR$/model/precursor_mediated" />
       <recent name="$PROJECT_DIR$/com/sirui/analytic/logs" />
       <recent name="$PROJECT_DIR$/com/sirui/analytic" />
       <recent name="$PROJECT_DIR$/com/sirui/sim" />
     </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/model/0306" />
+      <recent name="$PROJECT_DIR$/model/precursor_mediated" />
+      <recent name="$PROJECT_DIR$/model" />
+      <recent name="$PROJECT_DIR$/com/sirui/sim/logs" />
+    </key>
   </component>
-  <component name="RunManager" selected="Python.plot">
-    <configuration default="false" name="basic" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.plot_T_0306">
+    <configuration default="false" name="plot direct" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -340,79 +332,79 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="2DSim" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/model/model_i1.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/model/direct/plot.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
     </configuration>
-    <configuration default="false" name="model_i2" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration default="false" name="plot precursor" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/model" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/model/precursor_mediated" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="2DSim" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/model/model_i2.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/model/precursor_mediated/plot3.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
     </configuration>
-    <configuration default="false" name="model_i2_defect" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration default="false" name="plot 0306" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/model" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/model/0306" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="2DSim" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/model/model_i2_defect.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/model/0306/plot.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
     </configuration>
-    <configuration default="false" name="plot" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration default="false" name="plot_p_0306" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/model" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/model/0306" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="2DSim" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/model/plot.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/model/0306/plot_p.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
     </configuration>
-    <configuration default="false" name="plot_p" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration default="false" name="plot_T_0306" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/model" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/model/0306" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="2DSim" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/model/plot_p.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/model/0306/plot_T.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
@@ -630,19 +622,19 @@
     </configuration>
     <list size="6">
       <item index="0" class="java.lang.String" itemvalue="Python.TwoDSim" />
-      <item index="1" class="java.lang.String" itemvalue="Python.basic" />
-      <item index="2" class="java.lang.String" itemvalue="Python.model_i2" />
-      <item index="3" class="java.lang.String" itemvalue="Python.model_i2_defect" />
-      <item index="4" class="java.lang.String" itemvalue="Python.plot" />
-      <item index="5" class="java.lang.String" itemvalue="Python.plot_p" />
+      <item index="1" class="java.lang.String" itemvalue="Python.plot direct" />
+      <item index="2" class="java.lang.String" itemvalue="Python.plot precursor" />
+      <item index="3" class="java.lang.String" itemvalue="Python.plot 0306" />
+      <item index="4" class="java.lang.String" itemvalue="Python.plot_p_0306" />
+      <item index="5" class="java.lang.String" itemvalue="Python.plot_T_0306" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.plot_p" />
-        <item index="1" class="java.lang.String" itemvalue="Python.plot" />
-        <item index="2" class="java.lang.String" itemvalue="Python.model_i2_defect" />
-        <item index="3" class="java.lang.String" itemvalue="Python.model_i2" />
-        <item index="4" class="java.lang.String" itemvalue="Python.basic" />
+        <item index="0" class="java.lang.String" itemvalue="Python.plot_T_0306" />
+        <item index="1" class="java.lang.String" itemvalue="Python.plot_p_0306" />
+        <item index="2" class="java.lang.String" itemvalue="Python.plot 0306" />
+        <item index="3" class="java.lang.String" itemvalue="Python.plot precursor" />
+        <item index="4" class="java.lang.String" itemvalue="Python.plot direct" />
       </list>
     </recent_temporary>
   </component>
@@ -774,7 +766,13 @@
       <option name="project" value="LOCAL" />
       <updated>1456467829072</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="fit experiment data using Ref: Wu, two-step growth. Coverage.">
+      <created>1457036332795</created>
+      <option name="number" value="00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1457036332796</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -787,29 +785,29 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="2" y="23" width="1400" height="834" extended-state="0" />
+    <frame x="0" y="23" width="1400" height="834" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2569956" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26435935" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32884097" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32884097" sideWeight="0.5029455" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32258064" sideWeight="0.4970545" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32210243" sideWeight="0.4970545" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32614556" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31451613" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24815905" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32884097" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39247313" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31451613" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32479784" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32258064" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39112905" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32884097" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -865,7 +863,8 @@
     <MESSAGE value="added analytic model" />
     <MESSAGE value="refactored Atom to abstract class&#10;added Carbon&#10;added Defect" />
     <MESSAGE value="added quantitative model" />
-    <option name="LAST_COMMIT_MESSAGE" value="added quantitative model" />
+    <MESSAGE value="fit experiment data using Ref: Wu, two-step growth. Coverage." />
+    <option name="LAST_COMMIT_MESSAGE" value="fit experiment data using Ref: Wu, two-step growth. Coverage." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -911,29 +910,34 @@
           <option name="timeStamp" value="236" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/model/model_i1.py</url>
+          <url>file://$PROJECT_DIR$/model/direct/model_i1.py</url>
           <line>127</line>
           <option name="timeStamp" value="241" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/model/model_i2.py</url>
+          <url>file://$PROJECT_DIR$/model/direct/model_i2.py</url>
           <line>127</line>
           <option name="timeStamp" value="242" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/model/config.py</url>
-          <line>86</line>
+          <url>file://$PROJECT_DIR$/model/direct/config.py</url>
+          <line>88</line>
           <option name="timeStamp" value="248" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/model/plot_p.py</url>
-          <line>37</line>
+          <url>file://$PROJECT_DIR$/model/direct/plot_p.py</url>
+          <line>46</line>
           <option name="timeStamp" value="250" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/model/plot.py</url>
-          <line>115</line>
+          <url>file://$PROJECT_DIR$/model/direct/plot.py</url>
+          <line>118</line>
           <option name="timeStamp" value="251" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/model/precursor_mediated/plot3.py</url>
+          <line>19</line>
+          <option name="timeStamp" value="252" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
@@ -946,7 +950,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="252" />
+      <option name="time" value="255" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
@@ -958,108 +962,6 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/com/sirui/sim/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="63" column="49" selection-start-line="63" selection-start-column="19" selection-end-line="63" selection-end-column="49" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/com/sirui/analytic/log_parser.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="98" column="37" selection-start-line="98" selection-start-column="37" selection-end-line="98" selection-end-column="37" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/com/sirui/sim/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="4" column="14" selection-start-line="4" selection-start-column="14" selection-end-line="4" selection-end-column="14" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/com/sirui/sim/simulate.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="9" column="26" selection-start-line="9" selection-start-column="26" selection-end-line="9" selection-end-column="26" />
-          <folding>
-            <element signature="e#0#37#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/com/sirui/analytic/log_parser.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/com/sirui/sim/position.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/com/sirui/sim/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="4" column="14" selection-start-line="4" selection-start-column="14" selection-end-line="4" selection-end-column="14" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/com/sirui/analytic/log_parser.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="6" column="44" selection-start-line="6" selection-start-column="44" selection-end-line="6" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/simpy/resources/resource.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="159" column="0" selection-start-line="159" selection-start-column="0" selection-end-line="159" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/com/sirui/sim/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///Library/Python/2.7/site-packages/matplotlib/_pylab_helpers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="124" column="0" selection-start-line="124" selection-start-column="0" selection-end-line="124" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///Library/Python/2.7/site-packages/matplotlib/externals/six.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="569" column="0" selection-start-line="569" selection-start-column="0" selection-end-line="569" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///Library/Python/2.7/site-packages/matplotlib/artist.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1169,7 +1071,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.37588653">
           <caret line="2410" column="0" selection-start-line="2410" selection-start-column="0" selection-end-line="2410" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1233,9 +1134,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="14" column="8" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="8" />
-          <folding>
-            <element signature="e#1#32#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1243,7 +1141,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="12" column="20" selection-start-line="12" selection-start-column="20" selection-end-line="12" selection-end-column="20" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1261,9 +1158,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="165" column="30" selection-start-line="165" selection-start-column="30" selection-end-line="165" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#37#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1271,7 +1165,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="6" column="11" selection-start-line="6" selection-start-column="11" selection-end-line="6" selection-end-column="11" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1279,9 +1172,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="46" column="28" selection-start-line="46" selection-start-column="8" selection-end-line="46" selection-end-column="28" />
-          <folding>
-            <element signature="e#0#31#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1297,7 +1187,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.030726258">
           <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1306,7 +1195,7 @@
         <state vertical-scroll-proportion="0.7681564">
           <caret line="432" column="29" selection-start-line="432" selection-start-column="29" selection-end-line="432" selection-end-column="29" />
           <folding>
-            <element signature="e#0#13#0" expanded="true" />
+            <element signature="e#0#13#0" expanded="false" />
             <element signature="e#2430#3782#0" expanded="false" />
             <element signature="e#4228#8479#0" expanded="false" />
             <element signature="e#8862#9369#0" expanded="false" />
@@ -1316,54 +1205,151 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/model_i2.py">
+    <entry file="file://$PROJECT_DIR$/model/direct/fit_nucleation_density.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7824268">
-          <caret line="103" column="0" selection-start-line="103" selection-start-column="0" selection-end-line="103" selection-end-column="0" />
-          <folding />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="55" column="30" selection-start-line="55" selection-start-column="30" selection-end-line="55" selection-end-column="30" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/model_i1.py">
+    <entry file="file://$PROJECT_DIR$/model/direct/model_i1.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="5.753138">
+        <state vertical-scroll-proportion="0.0">
           <caret line="130" column="37" selection-start-line="130" selection-start-column="37" selection-end-line="130" selection-end-column="37" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/model_i2_defect.py">
+    <entry file="file://$PROJECT_DIR$/model/direct/model_i2.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="34" column="40" selection-start-line="34" selection-start-column="40" selection-end-line="34" selection-end-column="40" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/plot_p.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="24" column="63" selection-start-line="24" selection-start-column="63" selection-end-line="24" selection-end-column="63" />
+          <caret line="103" column="0" selection-start-line="103" selection-start-column="0" selection-end-line="103" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/plot.py">
+    <entry file="file://$PROJECT_DIR$/model/direct/plot_p.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.1232493">
+          <caret line="11" column="14" selection-start-line="11" selection-start-column="14" selection-end-line="11" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/scipy/integrate/odepack.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33333334">
+          <caret line="217" column="0" selection-start-line="217" selection-start-column="0" selection-end-line="217" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/precursor_mediated/plot3.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="83" column="53" selection-start-line="83" selection-start-column="53" selection-end-line="83" selection-end-column="53" />
+          <caret line="100" column="51" selection-start-line="100" selection-start-column="51" selection-end-line="100" selection-end-column="51" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/precursor_mediated/plot2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.506224">
+          <caret line="37" column="5" selection-start-line="37" selection-start-column="5" selection-end-line="37" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/direct/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/0306/fit_nucleation_density.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/direct/model_i2_defect.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.13692947">
+          <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/direct/plot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.36514524">
+          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/precursor_mediated/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="44" column="29" selection-start-line="44" selection-start-column="29" selection-end-line="44" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/precursor_mediated/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="19" column="23" selection-start-line="19" selection-start-column="23" selection-end-line="19" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/0306/plot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="120" column="0" selection-start-line="120" selection-start-column="0" selection-end-line="120" selection-end-column="14" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/config.py">
+    <entry file="file://$PROJECT_DIR$/model/0306/plot_p.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.45643154">
-          <caret line="22" column="18" selection-start-line="22" selection-start-column="18" selection-end-line="22" selection-end-column="18" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="31" column="27" selection-start-line="31" selection-start-column="27" selection-end-line="31" selection-end-column="27" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/0306/plot_T.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="47" column="64" selection-start-line="47" selection-start-column="64" selection-end-line="47" selection-end-column="64" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/0306/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="78" column="16" selection-start-line="78" selection-start-column="16" selection-end-line="78" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/0306/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.51256984">
+          <caret line="21" column="73" selection-start-line="21" selection-start-column="73" selection-end-line="21" selection-end-column="73" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>

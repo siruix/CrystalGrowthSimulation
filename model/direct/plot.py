@@ -1,8 +1,11 @@
 from __future__ import division
-from  model_i2_defect import *
+
 import matplotlib.pylab as plt
 import numpy as np
 from scipy.integrate import odeint
+
+from model_i2_defect import *
+
 # plot config
 use_log_scale = True
 
@@ -115,6 +118,7 @@ else:
 
 ax2.legend(loc=0)
 ax21.legend(loc=0)
+ax2.grid(True)
 #####################################
 plt.show()
 #

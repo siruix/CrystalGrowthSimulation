@@ -37,14 +37,15 @@ class Config(object):
     # Desorption
     # Assume first-order. No adsorbed atom interaction.
     # atomic frequency of crystal lattice
-    gamma_des = 1e13
+    gamma_des0 = 1e13
     # larger the long life time in second
-    tau_CH4_0 = 1/gamma_des
+    # tau_CH4_0 = 1/gamma_des
     # energy barrier to desorb in eV. Larger, the more CH4 accumulation
-    E_des = 0.2#0.7
+    E_des = 0.15#0.7
     # life time of adsorbate on surface
-    tau_CH4 = tau_CH4_0 * math.exp(e*E_des/k_B/T)
-    print('tau_CH4:%e'%tau_CH4)
+    gamma_des = gamma_des0 * math.exp(-e*E_des/k_B/T)
+    # gamma_des = gamma_des0 * 1e-1
+    print('gamma_des:%e'%gamma_des)
     #############################################
     # Diffusion
     # energy barrier to diffuse for CHx in eV
@@ -59,6 +60,7 @@ class Config(object):
     print('n0:%e'%n0)
     # Diffusion of CHx in unit area per second
     D = gamma_diff/4/n0 * math.exp(-e*E_diff/k_B/T)
+    print('Diffusion:%e'%D)
     ############################################
     # Defect
     # defect site per unit area
@@ -67,7 +69,7 @@ class Config(object):
     # CH4 to CHx activation energy barrier in eV
     E_a = 2.51 # ref: First-principle
     # coefficient. Larger the more CHx
-    A_const = 7e11#?
+    A_const = 7e11
     # reaction rate CH4 to CHx
     k_a = A_const * math.exp(-e*E_a/k_B/T)
     print('ka:%e'%k_a)
@@ -82,7 +84,7 @@ class Config(object):
     # decay rate coefficient. Attempt frequency decay.
     gamma_decay = 1e13
     # energy difference between 2-cluster and 1-cluster (eV). Larger the faster decay.
-    delta_E_decay = 0.4 #larger the slower decay. More nucleation.
+    delta_E_decay = 0.95 #larger the slower decay. More nucleation. Start time same.
     # decay rate from 2-cluster to 1-cluster
     decay_rate = gamma_decay * math.exp(-e * delta_E_decay / k_B / T)
     print('decay:%e'%decay_rate)
@@ -92,8 +94,13 @@ class Config(object):
         Config.c_ch4 = c_ch4
         Config.p = c_ch4 * Config.p0
         Config.I = Config.p / math.sqrt(2*math.pi*Config.m*Config.k_B*Config.T)
-
+        print('I:%e'%Config.I)
     # sticking coefficient as function of surface site coverage. Fitted by Ref:Li.two-step.
     @staticmethod
     def s(theta):
-        return Config.sigma_ads * (1-theta)
+        return Config.sigma_ads * (1-theta) ** 0.5
+
+    @staticmethod
+    def s_precursor_mediated(theta, K, n=1):
+        t = (1 - theta) ** n
+        return (1+K)*t / (1 + K*t)

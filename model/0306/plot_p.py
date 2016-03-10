@@ -1,9 +1,18 @@
 from __future__ import division
-from  model_i2_defect import *
+
 import matplotlib.pylab as plt
 import numpy as np
-from scipy.integrate import odeint
 from cycler import cycler
+from scipy.integrate import odeint
+
+from model import *
+
+####
+# E_des = 0.15
+# E_diff = 0.1
+# A_const = 7e11
+# B_const = 1e-2
+# delta_E_decay = 0.4
 #####################################
 # Experimental data Ref: Wu. Two-step growth
 coverage = {}
@@ -16,18 +25,18 @@ coverage['5ppm'] = ([0, 5, 10, 15, 20, 25, 30, 60], [0, 0.03, 0.15, 0.22, 0.33, 
 t = np.linspace(0, 60*60, 10000)
 y0 = [0, 0, 0, 0, 0, 1*Config.nd, 0]
 sigma = 1e-12
-para = (sigma, sigma, sigma, sigma, Config.decay_rate)
 c_ch4 = [30e-6, 20e-6, 10e-6, 5e-6]
 # c_ch4 = [30e-6]
 sol = []
 for c in c_ch4:
-    Config.set_parameters(c)
-    sol.append( odeint(f_rate2, y0, t, args=(para,), mxstep=100000) )
+    Config.setParameters(c)
+    para = (sigma, sigma, sigma, sigma, Config.decay_rate)
+    sol.append( odeint(f_rate2, y0, t, args=(para,), mxstep=1000000) )
 # plot results
 fig = plt.figure()
 ax = fig.add_subplot(111)
 ax.set_prop_cycle(cycler('color', ['c', 'b', 'r', 'k']))
-plt.xlabel('t')
+plt.xlabel('t/min')
 # plt.title('coverage v.s. time')
 ax.set_ylabel("Coverage")
 t_min = np.divide(t, 60)
@@ -40,5 +49,6 @@ for y in sol:
 
 ax.legend(loc=0)
 #####################################
+
 plt.show()
 
