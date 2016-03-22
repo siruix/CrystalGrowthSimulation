@@ -37,21 +37,22 @@ for T in Temperature:
 fig = plt.figure()
 ax = fig.add_subplot(111)
 ax.set_prop_cycle(cycler('color', ['r', 'g', 'b', 'm', 'k']))
-plt.xlabel('t/min')
-# plt.title('coverage v.s. time')
-ax.set_ylabel("Coverage")
+ax.tick_params(axis='both', which='major', labelsize=20)
+plt.xlabel('t/min', fontsize=20)
+ax.set_ylabel("Graphene Coverage (ML)", fontsize=20)
 t_min = np.divide(t, 60)
-ax.plot(coverage['1050'][0], coverage['1050'][1], 'o', label='1050c')
-ax.plot(coverage['1025'][0], coverage['1025'][1], 'o', label='1025c')
-ax.plot(coverage['1000'][0], coverage['1000'][1], 'o', label='1000c')
-ax.plot(coverage['950'][0], coverage['950'][1], 'o', label='950c')
-ax.plot(coverage['900'][0], coverage['900'][1], 'o', label='900c')
+ax.plot(coverage['1050'][0], coverage['1050'][1], 'o', label='1050$^\circ$C')
+ax.plot(coverage['1025'][0], coverage['1025'][1], 'o', label='1025$^\circ$C')
+ax.plot(coverage['1000'][0], coverage['1000'][1], 'o', label='1000$^\circ$C')
+ax.plot(coverage['950'][0], coverage['950'][1], 'o', label='950$^\circ$C')
+ax.plot(coverage['900'][0], coverage['900'][1], 'o', label='900$^\circ$C')
 for y in sol:
     ax.plot(t_min, y[:, 6], '-')
 
-ax.legend(loc=0)
+ax.legend(loc=0, numpoints=1, fontsize=15)
 ax.grid(True)
 #####################################
-
+plt.savefig('temperature_effect.eps', format='eps', dpi=1000)
+plt.savefig('/Users/raymon/Google Drive/UH/dissertation/dissertation/figure/chapter3/temperature_effect.eps', format='eps', dpi=1000)
 plt.show()
 

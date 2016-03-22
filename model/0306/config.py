@@ -27,16 +27,16 @@ class Config(object):
     #############################################
     # Adsorption
     # Assume first-order non-dissociative non-activate adsorption
-    sigma_ads = 1
+    # sigma_ads = 1
     # condensation coefficient. Prob gas trapped in precursor state.
-    alpha = 1
+    # alpha = 1
     # rate constants
     # gamma_d = 1
     # gamma_a = 1
     # energy difference for precursor to [chemsorb - desorb]. Extracted from [Xing. Kinetic]
     # e_diff = 2.74 # positive for activated adsorption. Larger, the larger temperature dependence.
     # s0 = alpha / (1 + gamma_d/gamma_a*math.exp(e*e_diff)/k_B/T)
-    s0 = 1
+    s0 = 0.5
     print('s0:%e'%s0)
     # # num atom adsorb per unit time per unit area as function of surface site coverage
     # r_ads = lambda theta: s(theta) * I
@@ -72,9 +72,9 @@ class Config(object):
     nd = n0 * 0 #1e-13
     ############################################
     # CH4(a) to CHx activation energy barrier in eV
-    E_a = 2.48 #2.51 # ref: First-principle
+    E_a = 2.2 #2.51 # ref: First-principle
     # coefficient. Larger the more CHx
-    A_const = 7e11
+    A_const = 9e10
     # reaction rate CH4 to CHx
     k_act = None
 
@@ -83,9 +83,8 @@ class Config(object):
     # coefficient. Smaller the more CHx, the more nucleation
     B_const = 1e-2#?
     # reaction rate CHx to CH4
-    # k_d = B_const * math.exp(-e*E_d/k_B/T)
-    k_d = 0 # assume no backward
-    print('kd:%e'%k_d)
+    k_deact = None
+    # k_deact = 0 # assume no backward
     ############################################
     # decay rate coefficient. Attempt frequency decay.
     gamma_decay = 1e13
@@ -95,7 +94,7 @@ class Config(object):
     decay_rate = None
 
     @classmethod
-    def setParameters(cls, c_ch4, T = 1273):
+    def setParameters(cls, c_ch4, T = 970+273):
         Config.c_ch4 = c_ch4
         Config.p = c_ch4 * Config.p0
         Config.I = Config.p / math.sqrt(2*math.pi*Config.m*Config.k_B*T)
@@ -104,7 +103,10 @@ class Config(object):
         Config.D = Config.gamma_diff/4/Config.n0 * math.exp(-Config.e*Config.E_diff/Config.k_B/T)
         print('Diffusion:%e'%Config.D)
         Config.k_act = Config.A_const * math.exp(-Config.e * Config.E_a / Config.k_B / T)
-        print('ka:%e' % Config.k_act)
+        print('k_act:%e' % Config.k_act)
+        # Config.k_deact = Config.B_const * math.exp(-Config.e*Config.E_d/Config.k_B/T)
+        Config.k_deact = 0
+        print('k_deact:%e' % Config.k_deact)
         Config.decay_rate = Config.gamma_decay*math.exp(-Config.e*Config.delta_E_decay/Config.k_B/T)
         print('decay:%e'%Config.decay_rate)
 

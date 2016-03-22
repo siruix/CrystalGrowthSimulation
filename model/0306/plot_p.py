@@ -36,9 +36,9 @@ for c in c_ch4:
 fig = plt.figure()
 ax = fig.add_subplot(111)
 ax.set_prop_cycle(cycler('color', ['c', 'b', 'r', 'k']))
-plt.xlabel('t/min')
-# plt.title('coverage v.s. time')
-ax.set_ylabel("Coverage")
+ax.tick_params(axis='both', which='major', labelsize=20)
+plt.xlabel('t/min', fontsize=20)
+ax.set_ylabel("Graphene Coverage (ML)", fontsize=20)
 t_min = np.divide(t, 60)
 ax.plot(coverage['30ppm'][0], coverage['30ppm'][1], 'o', label='30ppm')
 ax.plot(coverage['20ppm'][0], coverage['20ppm'][1], 'o', label='20ppm')
@@ -47,8 +47,10 @@ ax.plot(coverage['5ppm'][0], coverage['5ppm'][1], 'o', label='5ppm')
 for y in sol:
     ax.plot(t_min, y[:, 6], '-')
 
-ax.legend(loc=0)
+ax.legend(loc=0, numpoints=1, fontsize=15)
+ax.grid(True)
 #####################################
-
+plt.savefig('methane_effect.eps', format='eps', dpi=1000)
+plt.savefig('/Users/raymon/Google Drive/UH/dissertation/dissertation/figure/chapter3/methane_effect.eps', format='eps', dpi=1000)
 plt.show()
 

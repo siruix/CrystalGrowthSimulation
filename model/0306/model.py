@@ -16,8 +16,8 @@ def f_rate2(y, t, para):
     # Assume unstable cluster takes 1 site.
     n_CH4, n1, n2, nx, a_s, a_d, theta = y
     sigma_1,sigma_2,sigma_s,sigma_d,delta_2 = para
-    dn_CH4_dt = Config.s2(theta,0.4)*Config.I - n_CH4*Config.gamma_des - Config.k_act*n_CH4 + Config.k_d*n1
-    dn1_dt = Config.k_act*n_CH4 - Config.k_d*n1 - 2*sigma_1*Config.D*n1*n1 - sigma_2*Config.D*n1*n2 +\
+    dn_CH4_dt = Config.s2(theta,0.3)*Config.I - n_CH4*Config.gamma_des - Config.k_act*n_CH4 + Config.k_deact * n1
+    dn1_dt = Config.k_act*n_CH4 - Config.k_deact * n1 - 2 * sigma_1 * Config.D * n1 * n1 - sigma_2 * Config.D * n1 * n2 +\
              2*delta_2*n2 - n1*sigma_s*Config.D*a_s - n1*sigma_d*Config.D*a_d
     dn2_dt = sigma_1*Config.D*n1*n1 - sigma_2*Config.D*n1*n2 - delta_2*n2
     dns_dt = sigma_2*Config.D*n1*n2
@@ -33,8 +33,8 @@ def f_rate3(y, t, para):
     # Assume unstable cluster takes 1 site.
     n_CH4, n1, n2, nx, ax, ad, theta = y
     sigma_1,sigma_2,sigma_x,sigma_d,delta_2 = para
-    dn_CH4_dt = Config.s(theta)*Config.I - n_CH4*Config.gamma_des - Config.k_act * n_CH4 + Config.k_d * n1
-    dn1_dt = Config.k_act * n_CH4 - Config.k_d * n1 - 2 * sigma_1 * Config.D * n1 * n1 - sigma_2 * Config.D * n1 * n2 +\
+    dn_CH4_dt = Config.s(theta)*Config.I - n_CH4*Config.gamma_des - Config.k_act * n_CH4 + Config.k_deact * n1
+    dn1_dt = Config.k_act * n_CH4 - Config.k_deact * n1 - 2 * sigma_1 * Config.D * n1 * n1 - sigma_2 * Config.D * n1 * n2 +\
              2*delta_2*n2 - n1*sigma_x*Config.D*ax - n1*sigma_d*Config.D*ad
     dn2_dt = sigma_1*Config.D*n1*n1 - sigma_2*Config.D*n1*n2 - delta_2*n2
     dnx_dt = sigma_2*Config.D*n1*n2
