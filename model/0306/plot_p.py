@@ -51,6 +51,6 @@ ax.legend(loc=0, numpoints=1, fontsize=15)
 ax.grid(True)
 #####################################
 plt.savefig('methane_effect.eps', format='eps', dpi=1000)
-plt.savefig('/Users/raymon/Google Drive/UH/dissertation/dissertation/figure/chapter3/methane_effect.eps', format='eps', dpi=1000)
+plt.savefig('/Users/raymon/Google Drive/UH/dissertation/dissertation/figure/chapter6/methane_effect.eps', format='eps', dpi=1000)
 plt.show()
 

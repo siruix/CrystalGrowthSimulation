@@ -4,7 +4,7 @@ import matplotlib.pylab as plt
 import numpy as np
 from scipy.integrate import odeint
 
-from  model import *
+from model import *
 
 # plot config
 use_log_scale = True
@@ -21,8 +21,10 @@ c_ch4 = 30e-6
 Config.setParameters(c_ch4)
 ####### nucleation zone ########
 y0 = [0, 0, 0, 0, 0, 1*Config.nd, 0]
-sigma = 1e-12
-para = (sigma, sigma, sigma, sigma, Config.decay_rate)
+# change sigma does not affect coverage dynamics.
+sigma_1 = 1e-12
+sigma = 1e-8
+para = (sigma_1, sigma, sigma, sigma, Config.decay_rate)
 t = np.linspace(0, 1e-5, 10000)
 sol = odeint(f_rate2, y0, t, args=(para,))
 # plot results
