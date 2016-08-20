@@ -24,7 +24,7 @@ class Config(object):
     # impingement. molecular per second per square-centimeter
     I = None
     # phase change coeff
-    K = 0.5
+    K = 1
     #############################################
     # Adsorption
     # Assume first-order non-dissociative non-activate adsorption
