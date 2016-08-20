@@ -23,7 +23,8 @@ class Config(object):
     m = 16.04e-3 / Na
     # impingement. molecular per second per square-centimeter
     I = None
-
+    # phase change coeff
+    K = 1
     #############################################
     # Adsorption
     # Assume first-order non-dissociative non-activate adsorption

@@ -21,8 +21,8 @@ rate['5ppm'] = ([0.03, 0.15, 0.22, 0.33, 0.38], [0.015, 0.019, 0.018, 0.016, 0.0
 
 fig = plt.figure(1)
 ax = fig.add_subplot(111)
-ax.tick_params(axis='both', which='major', labelsize=20)
-plt.xlabel('t/min', fontsize=20)
+ax.tick_params(axis='both', which='major', labelsize=15)
+plt.xlabel('time ($min$)', fontsize=20)
 ax.set_prop_cycle(cycler('color', ['c', 'b', 'r', 'k']))
 ax.set_ylabel("Graphene Coverage (ML)", fontsize=20)
 ax.plot(coverage['30ppm'][0], coverage['30ppm'][1], '--o', label='30 ppm')
@@ -39,7 +39,7 @@ plt.savefig('/Users/raymon/Google Drive/UH/dissertation/dissertation/figure/chap
 ########## growth rate ########
 fig2 = plt.figure(2)
 ax2 = fig2.add_subplot(111)
-ax2.tick_params(axis='both', which='major', labelsize=20)
+ax2.tick_params(axis='both', which='major', labelsize=15)
 plt.xlabel('Coverage (ML)', fontsize=20)
 ax2.set_prop_cycle(cycler('color', ['c', 'b', 'r', 'k']))
 ax2.set_ylabel("Graphene Growth Rate (ML/min)", fontsize=20)

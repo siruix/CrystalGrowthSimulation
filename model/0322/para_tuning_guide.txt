@@ -1,0 +1,5 @@
+Want to change methane concentration effect?
+ - change the pre set temperature T
+
+Want to change nucleation density?
+ - change the capture coefficients

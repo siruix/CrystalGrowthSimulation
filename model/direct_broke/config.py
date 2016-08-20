@@ -74,7 +74,7 @@ class Config(object):
     # CH4(a) to CHx activation energy barrier in eV
     E_a = 2.5 #2.51 # ref: First-principle
     # coefficient. Larger the more CHx
-    A_const = 7e9
+    A_const = 5e10
     # reaction rate CH4 to CHx
     k_act = None
 
@@ -94,7 +94,7 @@ class Config(object):
     decay_rate = None
 
     @classmethod
-    def setParameters(cls, c_ch4, T = 1180+273):
+    def setParameters(cls, c_ch4, T = 1300+273):
         Config.c_ch4 = c_ch4
         Config.p = c_ch4 * Config.p0
         print('p:%e'%Config.p)

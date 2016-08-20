@@ -15,7 +15,7 @@ for i,Kp in enumerate(Kps):
         
 fig = plt.figure(1)
 ax = fig.add_subplot(111)
-ax.tick_params(axis='both', which='major', labelsize=20)
+ax.tick_params(axis='both', which='major', labelsize=15)
 plt.xlabel('Coverage (ML)', fontsize=20)
 # ax.set_prop_cycle(cycler('color', ['c', 'b', 'r', 'k', 'm']))
 ax.set_ylabel("$s/s_0$", fontsize=20)
