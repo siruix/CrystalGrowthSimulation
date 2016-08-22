@@ -1,5 +1,9 @@
 from __future__ import division
 import math
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class Config(object):
     """
@@ -54,69 +58,66 @@ class Config(object):
     E_diff = 0.1 # a guess. typically 5-20% of E_des
     # Diffusion pre-factor. Larger the longer diffusion
     # oscillation frequency of atom. Attempt frequency to overcome barrier.
-    gamma_diff = 1e13 #?
+    gamma_diff = 1e13 #
     # adsorption site spacing in centimeter
     a = 3.615e-8 #? lattice space
     # adsorption site per cm^2
     n0 = 1 / math.pow(a, 2)
-    print('n0:%e'%n0)
     # Diffusion of CHx in cm^2 per second
     D = None
 
     ############################################
     # Defect
-    # defect site per unit area
-    nd = n0 * 0 #1e-13
+    # defect site per cm^2
+    nd = 0
     ############################################
     # CH3(a) to CHx activation energy barrier in eV
     E_act = 1.55 # ref: First-principle 1.55 to 1.61
     # coefficient. Larger the more CHx
-    A_const = 1e13
+    A_const = 1e13 # let's fix this
     # reaction rate CH4 to CHx
     k_act = None
 
     # CHx to CH3(a) activation energy barrier in eV
     E_deact = 0.71 # ref: First-principle
     # coefficient. Smaller the more CHx, the more nucleation
-    B_const = 1e11#?
+    B_const = 1e12 # tun larger to delay the start time
     # reaction rate CHx to CH4
     k_deact = None
     ############################################
     # decay rate coefficient. Attempt frequency decay.
-    gamma_decay = 1e13
-    delta_E_decay = 0.95 #larger the slower decay. More nucleation. Start time same.
+    gamma_decay = 1e8
+    delta_E_decay = 2.24 #larger the slower decay. More nucleation. Start time same.
     decay_rate = None
+    ############################################
+    # capture coefficient
+    sigma = 1
+    sigma_s = 1e-1
 
     @classmethod
-    def setParameters(cls, c_ch4, T = 1080+273):
+    def setParameters(cls, c_ch4, T = 1050+273):
+        logger.info('######################## Useful Intermediate Parameters ########################')
         Config.c_ch4 = c_ch4
-        print('c_ch4:%e'%Config.c_ch4)
+        logger.info('c_ch4:%e'%Config.c_ch4)
         Config.p = Config.c_ch4 * Config.p0
-        print('p:%e'%Config.p)
+        logger.info('p:%e'%Config.p)
         Config.I = Config.p / math.sqrt(2*math.pi*Config.m*Config.k_B*T) * 1e-4
-        print('I:%e'%Config.I)
+        logger.info('I:%e'%Config.I)
         Config.s0 = Config.alpha / (1 + math.exp(-Config.e*(Config.E_d - Config.E_a)/Config.k_B/T))
-        print('s0:%e'%Config.s0)
+        logger.info('s0:%e'%Config.s0)
         Config.k_des = Config.gamma_des0 * math.exp(-Config.e * Config.E_des / Config.k_B / T)
-        print('k_des: %e' % Config.k_des)
+        logger.info('k_des: %e' % Config.k_des)
         Config.D = Config.gamma_diff/4/Config.n0 * math.exp(-Config.e*Config.E_diff/Config.k_B/T)
-        print('Diffusion coefficient:%e'%Config.D)
+        logger.info('Diffusion coefficient:%e'%Config.D)
         Config.k_act = Config.A_const * math.exp(-Config.e * Config.E_act / Config.k_B / T)
-        print('k_act:%e' % Config.k_act)
+        logger.info('k_act:%e' % Config.k_act)
         Config.k_deact = Config.B_const * math.exp(-Config.e * Config.E_deact / Config.k_B / T)
-        # Config.k_deact = 0
-        print('k_deact:%e' % Config.k_deact)
+        logger.info('k_deact:%e' % Config.k_deact)
         Config.decay_rate = Config.gamma_decay*math.exp(-Config.e*Config.delta_E_decay/Config.k_B/T)
-        print('decay:%e'%Config.decay_rate)
-
-    # sticking coefficient as function of surface site coverage. Fitted by Ref:Li.two-step.
-    @staticmethod
-    def s(theta):
-        # No precursor effect. Suitable for large desorption,
-        return Config.sigma_ads * (1-theta)
+        logger.info('decay:%e'%Config.decay_rate)
 
     @staticmethod
-    def s2(theta, Kp=1):
+    def s(theta, Kp=1):
         # precursor mediated
         # assume B = 0. Precursor complete disorder. theta00 = 1 - theta
         # Kp = 1 fall back to Langmuir.
