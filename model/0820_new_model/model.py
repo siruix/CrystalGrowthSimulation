@@ -26,9 +26,9 @@ def f_rate_2(y, t):
     sigma = Config.sigma
     sigma_s = Config.sigma_s
     delta = Config.decay_rate
-    dn_CH4_dt = Config.s(theta, 0.3) * Config.I - n_CH4 * Config.k_des - Config.k_act * n_CH4 + Config.k_deact * n1
     D = Config.D
-    dn1_dt = Config.k_act*n_CH4 - Config.k_deact*n1 - sigma*D*n1*(2*n1+a2) + sigma_s*D*(a_s+a_d) +\
+    dn_CH4_dt = Config.s(theta, 0.3) * Config.I - n_CH4 * Config.k_des - Config.k_act * n_CH4 + Config.k_deact * n1
+    dn1_dt = Config.k_act*n_CH4 - Config.k_deact*n1 - sigma*D*n1*(2*n1+a2) + sigma_s*D*n1*(a_s+a_d) +\
              delta*a2*2
     da2_dt = sigma*D*n1*2*n1 - sigma*D*n1*2*a2 - delta*a2*2
     dns_dt = sigma*D*n1*a2
