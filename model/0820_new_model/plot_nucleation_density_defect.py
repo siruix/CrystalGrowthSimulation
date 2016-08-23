@@ -11,7 +11,7 @@ from config import Config
 
 ######################################
 # Set parameters here
-nd = 1e5
+nd = 3.2e5
 #####################################
 t = np.linspace(0, 60*60, 10000)
 y0 = [0, 0, 0, 0, 0, 0, 1*nd]
@@ -19,16 +19,16 @@ c_ch4 = [30e-6, 20e-6, 10e-6, 5e-6]
 # c_ch4 = [30e-6]
 sol = []
 for c in c_ch4:
-    Config.setParameters(c)
+    Config.setParameters(c_ch4=c, nd=nd)
     sol.append( odeint(f_rate_2, y0, t, mxstep=10000, atol=1e-8, rtol=1e-6) )
 
 #####################################
 # Experimental data Ref: Wu. Two-step growth
 coverage = {}
-coverage['30ppm'] = ([0, 5, 10, 15, 20], [0, 0.78, 0.97, 0.99, 1])
-coverage['20ppm'] = ([0, 5, 10, 15, 20, 25, 30], [0, 0.58, 0.83, 0.94, 0.96, 0.99, 1])
-coverage['10ppm'] = ([0, 5, 10, 15, 20, 25, 30, 60], [0, 0.19, 0.38, 0.57, 0.75, 0.86, 0.94, 0.99])
-coverage['5ppm'] = ([0, 5, 10, 15, 20, 25, 30, 60], [0, 0.03, 0.15, 0.22, 0.33, 0.38, 0.48, 0.7])
+coverage['30ppm'] = ([5, 10, 15, 20], [0.78, 0.97, 0.99, 1])
+coverage['20ppm'] = ([5, 10, 15, 20, 25, 30], [0.58, 0.83, 0.94, 0.96, 0.99, 1])
+coverage['10ppm'] = ([5, 10, 15, 20, 25, 30, 60], [0.19, 0.38, 0.57, 0.75, 0.86, 0.94, 0.99])
+coverage['5ppm'] = ([5, 10, 15, 20, 25, 30, 60], [0.03, 0.15, 0.22, 0.33, 0.38, 0.48, 0.7])
 # nucleation density for CH4 5ppm, 10ppm, 20ppm, 30ppm
 nucleation_density = [3.4e5, 3.95e5, 4.4e5, 5.8e5]
 # plot results

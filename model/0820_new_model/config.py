@@ -69,7 +69,7 @@ class Config(object):
     ############################################
     # Defect
     # defect site per cm^2
-    nd = 0
+    nd = None
     ############################################
     # CH3(a) to CHx activation energy barrier in eV
     E_act = 1.55 # ref: First-principle 1.55 to 1.61
@@ -86,18 +86,18 @@ class Config(object):
     k_deact = None
     ############################################
     # decay rate coefficient. Attempt frequency decay.
-    gamma_decay = 1e8
-    delta_E_decay = 2.24 #larger the slower decay. More nucleation. Start time same.
+    gamma_decay = 1e13
+    delta_E_decay = 3.5 #larger the slower decay. More nucleation. Start time same. A reasonable guess.
     decay_rate = None
     ############################################
     # capture coefficient
     sigma = 1
-    sigma_s = 1e-1
+    sigma_s = 0.2
 
     @classmethod
-    def setParameters(cls, c_ch4, T = 1050+273):
+    def setParameters(cls, c_ch4, T = 1050+273, nd=0):
         logger.info('######################## Useful Intermediate Parameters ########################')
-        Config.c_ch4 = c_ch4
+        Config.c_ch4 = c_ch4 * 2 # 2 time bias compensation.
         logger.info('c_ch4:%e'%Config.c_ch4)
         Config.p = Config.c_ch4 * Config.p0
         logger.info('p:%e'%Config.p)
@@ -115,6 +115,8 @@ class Config(object):
         logger.info('k_deact:%e' % Config.k_deact)
         Config.decay_rate = Config.gamma_decay*math.exp(-Config.e*Config.delta_E_decay/Config.k_B/T)
         logger.info('decay:%e'%Config.decay_rate)
+        Config.nd = nd
+        logger.info('nd:%e'%Config.nd)
 
     @staticmethod
     def s(theta, Kp=1):
